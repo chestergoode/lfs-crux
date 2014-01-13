@@ -1,0 +1,25 @@
+# Description: Keytable files and keyboard utilities
+# URL:         ftp://ftp.win.tue.nl/pub/linux-local/utils/kbd/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=kbd
+version=1.15.5
+release=1
+source=(
+http://ftp.altlinux.org/pub/people/legion/kbd/kbd-$version.tar.gz
+kbd-$version-backspace-1.patch
+)
+build() {
+    cd $name-$version
+    patch -Np1 -i $SRC/kbd-$version-backspace-1.patch
+    sed -i -e '326 s/if/while/' src/loadkeys.analyze.l
+    sed -i 's/\(RESIZECONS_PROGS=\)yes/\1no/g' configure
+    sed -i 's/resizecons.8 //' man/man8/Makefile.in
+    ./configure --prefix=/usr --disable-vlock
+    make
+    make DESTDIR=$PKG install
+    mkdir -pv       $PKG/usr/share/doc/kbd-$version
+    cp -R -v doc/* $PKG/usr/share/doc/kbd-$version
+
+    rm -fr $PKG/usr/share/info
+}

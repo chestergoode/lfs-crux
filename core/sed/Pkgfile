@@ -1,0 +1,27 @@
+# Description: Sed - streams editor
+# URL:         http://www.gnu.org/software/sed//sed.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  acl
+name=sed
+version=4.2.2
+release=1
+source=(
+http://ftp.gnu.org/gnu/sed/sed-$version.tar.bz2
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr --bindir=/bin --htmldir=/usr/share/doc/sed-$version
+    make
+    make html
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+    make DESTDIR=$PKG -C doc install-html
+
+    rm -fr $PKG/usr/share/info
+}

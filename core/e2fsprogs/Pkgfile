@@ -1,0 +1,42 @@
+# Description: Ext2 Filesystem Utilities
+# URL:         http://e2fsprogs.sourceforge.net/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  util-linux
+name=e2fsprogs
+version=1.42.8
+release=1
+source=(
+http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-$version.tar.gz
+)
+build() {
+    cd $name-$version
+    sed -i -e 's/mke2fs/$MKE2FS/' -e 's/debugfs/$DEBUGFS/' tests/f_extent_oobounds/script
+    mkdir -v build
+    cd build
+    ../configure --prefix=/usr         \
+                 --with-root-prefix="" \
+                 --enable-elf-shlibs   \
+                 --disable-libblkid    \
+                 --disable-libuuid     \
+                 --disable-uuidd       \
+                 --disable-fsck
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+    make DESTDIR=$PKG install-libs
+    chmod -v u+w $PKG/usr/lib/{libcom_err,libe2p,libext2fs,libss}.a
+    gunzip -v $PKG/usr/share/info/libext2fs.info.gz
+    install-info --dir-file=/usr/share/info/dir $PKG/usr/share/info/libext2fs.info
+    makeinfo -o      doc/com_err.info ../lib/et/com_err.texinfo
+    install -v -m644 doc/com_err.info $PKG/usr/share/info
+    install-info --dir-file=/usr/share/info/dir $PKG/usr/share/info/com_err.info
+   
+
+    rm -fr $PKG/usr/share/info
+}

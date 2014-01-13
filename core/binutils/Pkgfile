@@ -1,0 +1,34 @@
+# Description: The GNU Binutils are a collection of binary tools
+# URL:         http://sources.redhat.com/binutils/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Arch Maintainer: Fredrik Rinnestam, fredrik at crux dot nu
+name=binutils
+version=2.23.2
+release=1
+source=(
+http://ftp.gnu.org/gnu/binutils/binutils-$version.tar.bz2
+)
+build() {
+    cd $name-$version
+    rm -fv etc/standards.info
+    sed -i.bak '/^INFO/s/standards.info //' etc/Makefile.in
+    sed -i -e 's/@colophon/@@colophon/' \
+           -e 's/doc@cygnus.com/doc@@cygnus.com/' bfd/doc/bfd.texinfo
+    mkdir -v ../binutils-build
+    cd ../binutils-build
+    ../binutils-2.23.2/configure --prefix=/usr --enable-shared
+    make tooldir=/usr
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        expect -c "spawn ls"
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG tooldir=/usr install
+    mkdir -pv $PKG/usr/include
+    cp -v ../binutils-2.23.2/include/libiberty.h $PKG/usr/include
+
+    rm -fr $PKG/usr/share/info
+}

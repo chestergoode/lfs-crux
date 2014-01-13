@@ -1,0 +1,43 @@
+# Description: A System V Release 4.0 curses emulation library
+# URL:         http://www.gnu.org/software/ncurses/ncurses.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=ncurses
+version=5.9
+release=1
+source=(
+http://ftp.gnu.org/gnu/ncurses/ncurses-$version.tar.gz
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr           \
+                --mandir=/usr/share/man \
+                --with-shared           \
+                --without-debug         \
+                --enable-pc-files       \
+                --enable-widec
+    make
+   
+    make DESTDIR=$PKG install
+    mkdir -pv $PKG/lib
+    mv -v $PKG/usr/lib/libncursesw.so.5* $PKG/lib
+    ln -sfv ../../lib/libncursesw.so.5 $PKG/usr/lib/libncursesw.so
+    for lib in ncurses form panel menu ; do
+        rm -vf                    $PKG/usr/lib/lib${lib}.so
+        echo "INPUT(-l${lib}w)" > $PKG/usr/lib/lib${lib}.so
+        ln -sfv lib${lib}w.a      $PKG/usr/lib/lib${lib}.a
+        ln -sfv ${lib}w.pc        $PKG/usr/lib/pkgconfig/${lib}.pc
+    done
+   
+    ln -sfv libncurses++w.a $PKG/usr/lib/libncurses++.a
+    rm -vf                     $PKG/usr/lib/libcursesw.so
+    echo "INPUT(-lncursesw)" > $PKG/usr/lib/libcursesw.so
+    ln -sfv libncurses.so      $PKG/usr/lib/libcurses.so
+    ln -sfv libncursesw.a      $PKG/usr/lib/libcursesw.a
+    ln -sfv libncurses.a       $PKG/usr/lib/libcurses.a
+    mkdir -pv       $PKG/usr/share/doc/ncurses-$version
+    cp -v -R doc/* $PKG/usr/share/doc/ncurses-$version
+   
+
+    rm -fr $PKG/usr/share/info
+}

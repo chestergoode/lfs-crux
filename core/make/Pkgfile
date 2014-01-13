@@ -1,0 +1,26 @@
+# Description: Controls the generation of executables and other compile-related tasks
+# URL:         http://www.gnu.org/software/make/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=make
+version=3.82
+release=1
+source=(
+http://ftp.gnu.org/gnu/make/make-$version.tar.bz2
+make-$version-upstream_fixes-3.patch
+)
+build() {
+    cd $name-$version
+    patch -Np1 -i $SRC/make-$version-upstream_fixes-3.patch
+    ./configure --prefix=/usr
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

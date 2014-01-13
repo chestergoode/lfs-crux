@@ -1,0 +1,34 @@
+# Description: Highly configurable text editor
+# URL:         http://www.vim.org/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  ncurses acl
+name=vim
+version=7.4
+release=1
+source=(
+ftp://ftp.vim.org/pub/vim/unix/vim-$version.tar.bz2 \
+vimrc
+)
+build() {
+    cd vim74
+    echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
+    ./configure --prefix=/usr --enable-multibyte
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k test || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+    ln -sv vim $PKG/usr/bin/vi
+    for L in  $PKG/usr/share/man/{,*/}man1/vim.1; do
+        ln -sv vim.1 $(dirname $L)/vi.1
+    done
+    mkdir -pv $PKG/usr/share/doc/vim-7.4
+    ln -sv ../vim/vim74/doc $PKG/usr/share/doc/vim-7.4
+    mkdir -pv $PKG/etc
+    cp $SRC/vimrc $PKG/etc/vimrc
+
+    rm -fr $PKG/usr/share/info
+}

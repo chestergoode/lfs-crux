@@ -1,0 +1,24 @@
+# Description: Kernel and system logging daemons
+# URL:         http://www.infodrom.org/projects/sysklogd/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=sysklogd
+version=1.5
+release=1
+source=(
+http://www.infodrom.org/projects/sysklogd/download/sysklogd-$version.tar.gz \
+syslog.conf
+)
+
+build() {
+    cd $name-$version
+    make
+    mkdir -pv $PKG/usr/share/man/man8
+    mkdir -pv $PKG/usr/share/man/man5
+    mkdir -pv $PKG/sbin
+    make BINDIR=$PKG/sbin prefix=$PKG install
+    mkdir $PKG/etc
+    cp syslog.conf $PKG/etc
+
+    rm -fr $PKG/usr/share/info
+}

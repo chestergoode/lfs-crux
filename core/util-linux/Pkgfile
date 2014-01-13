@@ -1,0 +1,30 @@
+# Description: Miscellaneous system utilities
+# URL:         http://userweb.kernel.org/~kzak/util-linux-ng/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Arch Maintainer: Fredrik Rinnestam, fredrik at crux dot nu
+name=util-linux
+version=2.23.2
+release=1
+source=(
+http://www.kernel.org/pub/linux/utils/util-linux/v2.23/util-linux-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    sed -i -e 's@etc/adjtime@var/lib/hwclock/adjtime@g' \
+         $(grep -rl '/etc/adjtime' .)
+   
+    mkdir -pv $PKG/var/lib/hwclock
+    ./configure --disable-su --disable-sulogin --disable-login
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        chown -Rv nobody .
+        su nobody -s /bin/bash -c "PATH=$PATH make -k check" || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

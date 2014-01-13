@@ -1,0 +1,25 @@
+# Description: File type identification utility
+# URL:         http://www.darwinsys.com/file/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  zlib
+name=file
+version=5.14
+release=1
+source=(
+ftp://ftp.astron.com/pub/file/file-$version.tar.gz
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

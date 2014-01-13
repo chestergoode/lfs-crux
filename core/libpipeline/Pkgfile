@@ -1,0 +1,31 @@
+# Description: 
+# URL: 
+# Maintainer: 
+# Depends on: 
+
+name=libpipeline
+version=1.2.4
+release=1
+source=(
+http://download.savannah.gnu.org/releases/libpipeline/libpipeline-$version.tar.gz
+)
+build() {
+    cd $name-$version
+    if [ -d /usr/lib/pkgconfig ]
+    then
+        PKG_CONFIG_PATH=/usr/lib/pkgconfig ./configure --prefix=/usr
+    else
+        PKG_CONFIG_PATH=/tools/lib/pkgconfig ./configure --prefix=/usr
+    fi
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

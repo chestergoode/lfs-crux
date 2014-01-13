@@ -1,0 +1,28 @@
+# Description: Shadow password file utilities
+# URL:         http://pkg-shadow.alioth.debian.org/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  acl
+name=shadow
+version=4.1.5.1
+release=1
+source=(
+http://pkg-shadow.alioth.debian.org/releases/shadow-$version.tar.bz2
+)
+build() {
+    cd $name-$version
+    sed -i 's/groups$(EXEEXT) //' src/Makefile.in
+    find man -name Makefile.in -exec sed -i 's/groups\.1 / /' {} \;
+    sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
+           -e 's@/var/spool/mail@/var/mail@' etc/login.defs
+    ./configure --sysconfdir=/etc
+    make
+   
+    make DESTDIR=$PKG install
+    mv -v $PKG/usr/bin/passwd $PKG/bin
+   
+    #pwconv
+    #grpconv
+    sed -i 's/yes/no/' $PKG/etc/default/useradd
+
+    rm -fr $PKG/usr/share/info
+}

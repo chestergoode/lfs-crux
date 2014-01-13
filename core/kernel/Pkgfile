@@ -1,0 +1,45 @@
+# Description: The Linux Kernel
+# URL: http://www.kernel.org
+# Maintainer: Matt Housh, jaeger at morpheus dot net
+
+name=kernel
+version=3.10.10
+release=1
+source=(
+http://www.kernel.org/pub/linux/kernel/v3.x/linux-$version.tar.xz
+usb.conf \
+lfs_i386_defconfig \
+lfs_pmac32_defconfig \
+lfs_g5_defconfig
+)
+
+build() {
+    cd linux-$version
+    make mrproper
+    case $(uname -m) in
+      *86) cp $SRC/lfs_i386_defconfig .config ;;
+      ppc) cp $SRC/lfs_pmac32_defconfig .config ;;
+      ppc64) cp $SRC/lfs_g5_defconfig .config ;;
+    esac
+
+    make oldconfig
+    make -j 2
+    make all
+    mkdir $PKG/boot
+    make INSTALL_MOD_PATH=$PKG modules_install
+
+    case $(uname -m) in
+      *86) cp -v arch/x86/boot/bzImage $PKG/boot/vmlinuz-3.10.10-lfs-7.4 ;;
+      ppc) cp -v vmlinux $PKG/boot/vmlinuz-3.10.10-lfs-7.4 ;;
+      ppc64) cp -v vmlinux $PKG/boot/vmlinuz-3.10.10-lfs-7.4 ;;
+    esac
+    cp -v System.map $PKG/boot/System.map-3.10.10
+    cp -v .config $PKG/boot/config-3.10.10
+
+    install -d $PKG/usr/share/doc/linux-3.10.10
+    cp -r Documentation/* $PKG/usr/share/doc/linux-3.10.10
+    install -d $PKG/etc/modprobe.d
+    cp $SRC/usb.conf $PKG/etc/modprobe.d/usb.conf
+
+    rm -fr $PKG/usr/share/info
+}

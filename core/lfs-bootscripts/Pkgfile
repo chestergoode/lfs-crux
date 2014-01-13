@@ -1,0 +1,24 @@
+# Description: LFS bootscripts
+# URL: http://www.linuxfromscratch.org
+# Maintainer: 
+
+name=lfs-bootscripts
+version=20130821
+release=1
+source=(
+http://www.linuxfromscratch.org/lfs/downloads/7.4/lfs-bootscripts-$version.tar.bz2 \
+clock fstab inittab inputrc network profile
+)
+build() {
+    cd $name-$version
+    make DESTDIR=$PKG install
+    mkdir -pv $PKG/etc/sysconfig
+    cp $SRC/clock $PKG/etc/sysconfig
+    cp $SRC/fstab $PKG/etc
+    cp $SRC/inittab $PKG/etc
+    cp $SRC/inputrc $PKG/etc
+    cp $SRC/network $PKG/etc/sysconfig
+    cp $SRC/profile $PKG/etc
+
+    rm -fr $PKG/usr/share/info
+}

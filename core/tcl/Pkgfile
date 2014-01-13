@@ -1,0 +1,38 @@
+# Description: A portable scripting environment for Unix, Windows, and Macintosh.
+# URL: http://tcl.sourceforge.net/
+# Maintainer: Danny Rawlins, monster dot romster at gmail dot com
+# Packager: Sven Dahl, dahl at c64 dot org
+
+name=tcl
+version=8.6.0
+release=1
+source=(
+http://downloads.sourceforge.net/tcl/tcl$version-src.tar.gz
+)
+build() {
+    cd $name$version
+    cd unix &&
+    ./configure --prefix=/usr           \
+            --without-tzdata        \
+            --mandir=/usr/share/man \
+            $([ $(uname -m) = x86_64 ] && echo --enable-64bit)
+    make
+
+    sed -e "s@^\(TCL_SRC_DIR='\).*@\1/usr/include'@" \
+        -e "/TCL_B/s@='\(-L\)\?.*unix@='\1/usr/lib@" \
+        -i tclConfig.sh
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k test || true
+        echo =============== TESTING end
+    fi
+
+    make DESTDIR=$PKG install
+    make DESTDIR=$PKG install-private-headers
+    ln -v -sf tclsh8.6 $PKG/usr/bin/tclsh
+    chmod -v 755 $PKG/usr/lib/libtcl8.6.so
+
+    rm -fr $PKG/usr/share/info
+}

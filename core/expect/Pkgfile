@@ -1,0 +1,26 @@
+name=expect
+version=5.45
+release=1
+source=(
+http://prdownloads.sourceforge.net/expect/expect$version.tar.gz
+)
+build() {
+    cd $name$version
+    ./configure --prefix=/usr       \
+            --with-tcl=/usr/lib \
+            --enable-shared     \
+            --with-tclinclude=/usr/include &&
+    make
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make test || true
+        echo =============== TESTING end
+    fi
+
+    make DESTDIR=$PKG install
+    ln -svf expect5.45/libexpect5.45.so $PKG/usr/lib
+
+    rm -fr $PKG/usr/share/info
+}

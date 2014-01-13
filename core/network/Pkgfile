@@ -1,0 +1,14 @@
+name=net
+version=1
+release=1
+source=(ifconfig.eth0 resolv.conf hosts)
+
+build() {
+
+	mkdir -pv $PKG/etc/sysconfig
+	cp $SRC/ifconfig.eth0 $PKG/etc/sysconfig
+	cp $SRC/resolv.conf $PKG/etc
+	cp $SRC/hosts $PKG/etc
+
+    rm -fr $PKG/usr/share/info
+}

@@ -1,0 +1,38 @@
+# Description: Perl programming language
+# URL:         http://www.perl.org/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  db gdbm
+name=perl
+version=5.18.1
+release=1
+source=(
+http://www.cpan.org/src/5.0/perl-$version.tar.bz2 \
+perl-$version-libc-1.patch
+)
+build() {
+    cd $name-$version
+    mkdir $PKG/etc
+    echo "127.0.0.1 localhost $(hostname)" > $PKG/etc/hosts
+    sed -i -e "s|BUILD_ZLIB\s*= True|BUILD_ZLIB = False|"           \
+           -e "s|INCLUDE\s*= ./zlib-src|INCLUDE    = /usr/include|" \
+           -e "s|LIB\s*= ./zlib-src|LIB        = /usr/lib|"         \
+        cpan/Compress-Raw-Zlib/config.in
+    sh Configure -des -Dprefix=/usr                 \
+                      -Dvendorprefix=/usr           \
+                      -Dman1dir=/usr/share/man/man1 \
+                      -Dman3dir=/usr/share/man/man3 \
+                      -Dpager="/usr/bin/less -isR"  \
+                      -Duseshrplib
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k test || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/etc/hosts
+    rm -fr $PKG/usr/share/info
+}

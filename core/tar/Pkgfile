@@ -1,0 +1,34 @@
+# Description: GNU tar
+# URL:         http://www.gnu.org/software/tar/tar.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=tar
+version=1.26
+release=1
+source=(
+http://ftp.gnu.org/gnu/tar/tar-$version.tar.bz2
+tar-$version-manpage-1.patch
+)
+build() {
+    cd $name-$version
+    patch -Np1 -i $SRC/tar-$version-manpage-1.patch
+    sed -i -e '/gets is a/d' gnu/stdio.in.h
+    FORCE_UNSAFE_CONFIGURE=1  \
+    ./configure --prefix=/usr \
+                --bindir=/bin \
+                --libexecdir=/usr/sbin
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+   
+    make DESTDIR=$PKG -C doc install-html docdir=/usr/share/doc/tar-$version
+    mkdir -pv $PKG/usr/share/man/man1
+    perl tarman > $PKG/usr/share/man/man1/tar.1
+
+    rm -fr $PKG/usr/share/info
+}

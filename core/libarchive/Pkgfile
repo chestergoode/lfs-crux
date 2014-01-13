@@ -1,0 +1,23 @@
+# Description: Library to create and read several archive formats
+# URL:         http://libarchive.github.com/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  bzip2, xz, zlib, acl
+name=libarchive
+version=3.1.2
+release=1
+source=( http://www.libarchive.org/downloads/libarchive-$version.tar.gz)
+
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

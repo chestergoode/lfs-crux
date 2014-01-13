@@ -1,0 +1,26 @@
+# Description: A pattern scanning and processing language
+# URL:         http://www.gnu.org/software/gawk/gawk.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=gawk
+version=4.1.0
+release=1
+source=(
+http://ftp.gnu.org/gnu/gawk/gawk-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr --libexecdir=/usr/lib
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+    mkdir -pv $PKG/usr/share/doc/gawk-$version
+    cp    -v doc/{awkforai.txt,*.{eps,pdf,jpg}} $PKG/usr/share/doc/gawk-$version
+
+    rm -fr $PKG/usr/share/info
+}

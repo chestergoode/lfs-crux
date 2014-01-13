@@ -1,0 +1,31 @@
+# Description: C library for multiple-precision floating-point computations with correct rounding
+# URL:         http://www.mpfr.org/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  libgmp
+
+name=mpfr
+version=3.1.2
+release=1
+source=(
+http://www.mpfr.org/mpfr-$version/mpfr-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    ./configure  --prefix=/usr        \
+                 --enable-thread-safe \
+                 --docdir=/usr/share/doc/mpfr-3.1.2
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make html
+   
+    make DESTDIR=$PKG install
+    make DESTDIR=$PKG install-html
+   
+
+    rm -fr $PKG/usr/share/info
+}

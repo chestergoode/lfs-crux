@@ -1,0 +1,27 @@
+name=dejagnu
+version=1.5.1
+release=1
+source=(
+http://ftp.gnu.org/gnu/dejagnu/dejagnu-$version.tar.gz
+)
+build() {
+    cd $name-$version
+
+    ./configure --prefix=/usr
+    makeinfo --html --no-split -o doc/dejagnu.html doc/dejagnu.texi
+    makeinfo --plaintext       -o doc/dejagnu.txt  doc/dejagnu.texi
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+
+    make DESTDIR=$PKG install
+    install -v -dm755   $PKG/usr/share/doc/dejagnu-1.5.1
+    install -v -m644    doc/dejagnu.{html,txt} \
+                    $PKG/usr/share/doc/dejagnu-1.5.1
+
+    rm -fr $PKG/usr/share/info
+}

@@ -1,0 +1,21 @@
+# Description: Userspace device management daemon
+# URL:         http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  kmod
+name=udev-lfs
+version=206-1
+release=1
+source=(
+http://www.freedesktop.org/software/systemd/systemd-206.tar.xz \
+http://anduin.linuxfromscratch.org/sources/other/udev-lfs-$version.tar.bz2
+)
+build() {
+    mv udev-lfs-$version systemd-206
+    cd systemd-206
+   
+    make -f udev-lfs-$version/Makefile.lfs
+    make DESTDIR=$PKG -f udev-lfs-$version/Makefile.lfs install
+    #build/udevadm hwdb --update
+    #bash udev-lfs-$version/init-net-rules.sh
+    rm -fr $PKG/usr/share/info
+}

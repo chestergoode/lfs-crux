@@ -1,0 +1,27 @@
+# Description: A Multiboot boot loader
+# URL: http://www.gnu.org/software/grub/
+# Maintainer: Matt Housh, jaeger at morpheus dot net
+# Depends on: libdevmapper, freetype
+
+name=grub
+version=2.00
+release=1
+source=(
+http://ftp.gnu.org/gnu/grub/grub-$version.tar.xz \
+grub.cfg
+)
+build() {
+    cd $name-$version
+    sed -i -e '/gets is a/d' grub-core/gnulib/stdio.in.h
+    ./configure --prefix=/usr          \
+                --sysconfdir=/etc      \
+                --disable-grub-emu-usb \
+                --disable-efiemu       \
+                --disable-werror
+    make
+    make DESTDIR=$PKG install
+    mkdir -pv $PKG/boot/grub
+    cp $SRC/grub.cfg $PKG/boot/grub
+
+    rm -fr $PKG/usr/share/info
+}

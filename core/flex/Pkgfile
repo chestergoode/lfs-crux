@@ -1,0 +1,33 @@
+# Description: Fast Lexical Analyzer Generator
+# URL:         http://flex.sourceforge.net/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=flex
+version=2.5.37
+release=1
+source=(
+http://prdownloads.sourceforge.net/flex/flex-$version.tar.bz2 \
+lex
+)
+build() {
+    cd $name-$version
+    sed -i -e '/test-bison/d' tests/Makefile.in
+    ./configure --prefix=/usr \
+                --docdir=/usr/share/doc/flex-$version
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+    mkdir -p $PKG/usr/lib
+    ln -sv libfl.a $PKG/usr/lib/libl.a
+    mkdir -p $PKG/usr/bin
+    cp $SRC/lex $PKG/usr/bin
+    chmod -v 755 $PKG/usr/bin/lex
+
+    rm -fr $PKG/usr/share/info
+}

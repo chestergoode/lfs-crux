@@ -1,0 +1,27 @@
+name=man-db
+version=2.6.5
+release=1
+source=(
+http://download.savannah.gnu.org/releases/man-db/man-db-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr                        \
+                --libexecdir=/usr/lib                \
+                --docdir=/usr/share/doc/man-db-$version \
+                --sysconfdir=/etc                    \
+                --disable-setuid                     \
+                --with-browser=/usr/bin/lynx         \
+                --with-vgrind=/usr/bin/vgrind        \
+                --with-grap=/usr/bin/grap
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

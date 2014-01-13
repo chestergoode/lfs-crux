@@ -1,0 +1,26 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=check
+version=0.9.10
+release=1
+source=(
+  http://downloads.sourceforge.net/check/check-$version.tar.gz
+)
+
+build() {
+    cd $name-$version
+   ./configure --prefix=/usr --disable-static
+   make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        #make -k check || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG docdir=/usr/share/doc/check-$version install
+
+    rm -fr $PKG/usr/share/info
+}

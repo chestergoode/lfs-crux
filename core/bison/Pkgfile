@@ -1,0 +1,24 @@
+# Description: The GNU Project parser generator
+# URL:         http://www.gnu.org/software/bison/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=bison
+version=3.0
+release=1
+source=(
+http://ftp.gnu.org/gnu/bison/bison-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

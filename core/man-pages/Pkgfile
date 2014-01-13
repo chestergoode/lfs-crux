@@ -1,0 +1,17 @@
+# Description: The Linux manpages collection
+# URL:         http://man7.org/linux/man-pages/index.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  man
+name=man-pages
+version=3.53
+release=1
+source=(
+http://www.kernel.org/pub/linux/docs/man-pages/man-pages-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    make DESTDIR=$PKG install
+    rm -fv $PKG/usr/share/man/{man3/getspnam.3,man5/passwd.5}
+
+    rm -fr $PKG/usr/share/info
+}

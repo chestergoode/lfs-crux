@@ -1,0 +1,24 @@
+name=texinfo
+version=5.1
+release=1
+source=(
+http://ftp.gnu.org/gnu/texinfo/texinfo-$version.tar.xz \
+texinfo-$version-test-1.patch
+)
+
+build() {
+    cd $name-$version
+    patch -Np1 -i $SRC/texinfo-$version-test-1.patch
+    ./configure --prefix=/usr
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+    make DESTDIR=$PKG TEXMF=/usr/share/texmf install-tex
+
+    rm -fr $PKG/usr/share/info
+}

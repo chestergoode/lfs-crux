@@ -1,0 +1,32 @@
+# Description: An sh-compatible command language interpreter
+# URL:         http://cnswww.cns.cwru.edu/~chet/bash/bashtop.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  ncurses readline
+name=bash
+version=4.2
+release=1
+source=(
+http://ftp.gnu.org/gnu/bash/bash-$version.tar.gz \
+bash-$version-fixes-12.patch
+)
+build() {
+    cd $name-$version
+    patch -Np1 -i $SRC/bash-$version-fixes-12.patch
+    ./configure --prefix=/usr                     \
+                --bindir=/bin                     \
+                --htmldir=/usr/share/doc/bash-$version \
+                --without-bash-malloc             \
+                --with-installed-readline
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+       chown -Rv nobody .
+       su nobody -s /bin/bash -c "PATH=$PATH make -k tests" || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

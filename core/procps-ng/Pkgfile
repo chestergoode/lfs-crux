@@ -1,0 +1,37 @@
+# Description: The /proc file system utilities
+# URL:         http://gitorious.org/procps
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  ncurses
+
+name=procps-ng
+version=3.3.8
+release=1
+source=(
+http://sourceforge.net/projects/procps-ng/files/Production/procps-ng-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr                           \
+                --exec-prefix=                          \
+                --libdir=/usr/lib                       \
+                --docdir=/usr/share/doc/procps-ng-3.3.8 \
+                --disable-static                        \
+                --disable-skill                         \
+                --disable-kill
+    make
+    sed -i -r 's|(pmap_initname)\\\$|\1|' testsuite/pmap.test/pmap.exp
+   
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   
+    make DESTDIR=$PKG install
+    mkdir $PKG/lib
+    mv -v $PKG/usr/lib/libprocps.so.* $PKG/lib
+    ln -sfv ../../lib/libprocps.so.1.1.2 $PKG/usr/lib/libprocps.so
+
+    rm -fr $PKG/usr/share/info
+}

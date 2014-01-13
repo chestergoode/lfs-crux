@@ -1,0 +1,24 @@
+# Description: Package with the GNU diff, diff3, sdiff, and cmp utilities
+# URL:         http://www.gnu.org/software/diffutils/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=diffutils
+version=3.3
+release=1
+source=(
+http://ftp.gnu.org/gnu/diffutils/diffutils-$version.tar.xz
+)
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}
