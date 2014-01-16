@@ -1,4 +1,4 @@
 lfs-crux
 ========
 
-Multi-arch LFS with Crux style package management
+Multi-arch LFS with CRUX style package management
