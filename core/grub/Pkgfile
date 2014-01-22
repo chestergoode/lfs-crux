@@ -1,6 +1,5 @@
 # Description: A Multiboot boot loader
 # URL: http://www.gnu.org/software/grub/
-# Maintainer: Matt Housh, jaeger at morpheus dot net
 # Depends on: libdevmapper, freetype
 
 name=grub

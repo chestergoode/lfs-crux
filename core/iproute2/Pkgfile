@@ -1,6 +1,5 @@
 # Description: A collection of utilites for controlling TCP/IP networking and traffic in Linux
 # URL:         http://www.linuxfoundation.org/collaborate/workgroups/networking/iproute2
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 # Depends on:  db iptables
 name=iproute2
 version=3.10.0

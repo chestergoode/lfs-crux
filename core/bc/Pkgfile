@@ -1,6 +1,5 @@
 # Description: An arbitrary precision calculator language
 # URL:         http://www.gnu.org/software/bc/bc.html
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 # Depends on:  ncurses, readline
 name=bc
 version=1.06.95

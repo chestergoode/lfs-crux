@@ -1,6 +1,5 @@
 # Description: The GNU Compiler Collection
 # URL:         http://gcc.gnu.org
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 # Depends on:  zlib libmpc
 name=gcc
 version=4.8.1

@@ -1,6 +1,5 @@
 # Description: fdisk program specific for mac partition tables
 # URL: http://www.debian.org
-# Maintainer: CRUX PPC team - http://cruxppc.org/
 # PPC!=upstream:
 
 name=mac-fdisk

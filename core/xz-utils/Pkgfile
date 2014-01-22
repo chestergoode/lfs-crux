@@ -1,6 +1,5 @@
 # Description: Compression utility using the lzma algorithm, successor of lzma-utils
 # URL:         http://tukaani.org/xz/
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 
 name=xz-utils
 version=5.0.5

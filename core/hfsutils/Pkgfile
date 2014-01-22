@@ -1,6 +1,5 @@
 # Description: tools used to access hfs filesystems
 # URL:         http://www.mars.org/home/rob/proj/hfs/
-# Maintainer:  CRUX PPC team http://cruxppc.sunsite.dk
 # PPC!=upstream:
 
 name=hfsutils

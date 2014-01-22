@@ -1,10 +1,8 @@
 # Description: Root filesystem package
 # URL:         http://crux.nu
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 
 # Description: Root filesystem package
 # URL:         http://crux.nu
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 # PPC!=upstream: crux binary, issue and motd report "CRUX PPC" instead of "CRUX"
 
 name=filesystem

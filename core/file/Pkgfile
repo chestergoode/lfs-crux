@@ -1,6 +1,5 @@
 # Description: File type identification utility
 # URL:         http://www.darwinsys.com/file/
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 # Depends on:  zlib
 name=file
 version=5.14

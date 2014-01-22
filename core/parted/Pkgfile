@@ -1,10 +1,8 @@
 # Description: A library and frontend to manipulate partition tables
 # URL: http://www.gnu.org/software/parted/
-# Maintainer: Matt Housh, jaeger at morpheus dot net
 # Depends on: libdevmapper, readline, udev, util-linux
 # Description: package for creating, destroying, resizing, checking and copying partitions and filesystem
 # URL: http://www.gnu.org/software/parted/
-# Maintainer: acrux, acrux at linuxmail dot org
 # Depends on: e2fsprogs, readline, reiserfsprogs, libdevmapper
 # PPC!=upstream:
 

@@ -1,6 +1,5 @@
 # Description: GNU tar
 # URL:         http://www.gnu.org/software/tar/tar.html
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 
 name=tar
 version=1.26

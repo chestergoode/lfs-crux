@@ -1,6 +1,5 @@
 # Description: Free library for arbitrary precision arithmetic
 # URL:         http://gmplib.org/
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 
 name=gmp
 version=5.1.2

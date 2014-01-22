@@ -1,6 +1,5 @@
 # Description: The Linux Kernel
 # URL: http://www.kernel.org
-# Maintainer: Matt Housh, jaeger at morpheus dot net
 
 name=kernel
 version=3.10.10

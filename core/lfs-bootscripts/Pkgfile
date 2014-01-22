@@ -1,6 +1,5 @@
 # Description: LFS bootscripts
 # URL: http://www.linuxfromscratch.org
-# Maintainer: 
 
 name=lfs-bootscripts
 version=20130821
