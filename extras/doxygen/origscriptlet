@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+
+
+PKG_DIR=doxygen
+
+#===name=doxygen
+mkdir -p $SRC_DIR/$PKG_DIR
+cd $SRC_DIR/$PKG_DIR
+#===version=doxygen-1.8.5.src.tar.gz
+if [[ ! -f $PACKAGE ]] ; then
+  if [[ -f $SRC_ARCHIVE/$PKG_DIR/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PKG_DIR/$PACKAGE $PACKAGE
+  elif [[ -f $SRC_ARCHIVE/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PACKAGE $PACKAGE
+  else
+    wget -T 30 -t 5 ${FTP_SERVER}svn/d/$PACKAGE || \
+    wget -T 30 -t 5 http://ftp.stack.nl/pub/doxygen/doxygen-1.8.5.src.tar.gz || \
+    wget -T 30 -t 5 ftp://ftp.stack.nl/pub/doxygen/doxygen-1.8.5.src.tar.gz
+    cp $PACKAGE $SRC_ARCHIVE
+  fi
+fi
+echo "db51274568755e2c75c2657e30a78a55  $PACKAGE" | md5sum -c -
+
+
+if [ "${PACKAGE%.zip}" = "${PACKAGE}" ]; then
+ if [[ -e unpacked ]] ; then
+  UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+  [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP2 rm -rf $UNPACKDIR
+ fi
+ tar -xvf $PACKAGE > unpacked
+ UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+else
+ UNPACKDIR=${PACKAGE%.zip}
+ [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP3 rm -rf $UNPACKDIR
+ unzip -d $UNPACKDIR ${PACKAGE}
+fi
+#========== UNPACKDIR cd $UNPACKDIR
+./configure --prefix /usr \
+            --docdir /usr/share/doc/doxygen-1.8.5 &&
+make
+make -j1 install
+make -j1 install_docs
+#===== LDCONFIG1ldconfig
+
+cd $SRC_DIR/$PKG_DIR
+#===CLEANUP1 rm -rf $UNPACKDIR unpacked
+
+exit

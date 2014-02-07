@@ -1,0 +1,26 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=gdb
+version=7.6.1
+release=1
+source=(
+  ftp://ftp.gnu.org/gnu/gdb/gdb-$version.tar.bz2
+)
+
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr &&
+    make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make -j1 -C gdb DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

@@ -1,0 +1,27 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libpng
+version=libpng-1.6.4.tar.xz
+release=1
+source=(
+  http://downloads.sourceforge.net/libpng/libpng-1.6.4.tar.xz \
+  http://downloads.sourceforge.net/libpng-apng/libpng-1.6.3-apng.patch.gz
+)
+
+build() {
+    cd $name-$version
+    # Fixup this Pkgfile and then remove this exit
+    exit 1   # This Pkgfile has not yet been reviewed and corrected
+   gzip -cd ../libpng-1.6.3-apng.patch.gz | patch -p1
+   ./configure --prefix=/usr --disable-static &&
+   make
+   #make -k check || true
+   make -j1 DESTDIR=$PKG install &&
+   mkdir -v $PKG/usr/share/doc/libpng-1.6.4 &&
+   cp -v README libpng-manual.txt $PKG/usr/share/doc/libpng-1.6.4
+   #===== LDCONFIG1ldconfig
+   
+}

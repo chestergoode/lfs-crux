@@ -1,0 +1,36 @@
+# Description: Access Control Lists library
+# URL:         http://savannah.nongnu.org/projects/acl
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  attr
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=gnutls
+version=3.2.4
+release=1
+source=(
+  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.2/gnutls-$version.tar.xz
+)
+
+build() {
+   cd $name-$version
+    ./configure --prefix=/usr    \
+            --disable-static \
+            --with-default-trust-store-file=/etc/ssl/ca-bundle.crt &&
+    make
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+
+    make DESTDIR=$PKG install
+
+    #make -C doc/reference install-data-local
+
+    rm -fr $PKG/usr/share/info
+}

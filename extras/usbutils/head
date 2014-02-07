@@ -1,0 +1,4 @@
+# Description: pciutils-like utilities for USB
+# URL:         https://github.com/gregkh/usbutils
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  libusb

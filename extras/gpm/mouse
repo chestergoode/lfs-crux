@@ -1,0 +1,7 @@
+# Begin $PKG/etc/sysconfig/mouse
+   
+MDEVICE="/dev/psaux"
+PROTOCOL="imps2"
+GPMOPTS=""
+   
+# End $PKG/etc/sysconfig/mouse

@@ -1,0 +1,37 @@
+# Description: Library and utilities to access the PCI bus configuration registers
+# URL:         http://mj.ucw.cz/pciutils.shtml
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=pciutils
+version=3.2.0
+release=1
+source=(
+  ftp://ftp.kernel.org/pub/software/utils/pciutils/pciutils-$version.tar.xz
+)
+
+build() {
+   cd $name-$version
+   make PREFIX=/usr              \
+        SHAREDIR=/usr/share/misc \
+        MANDIR=/usr/share/man    \
+        SHARED=yes               \
+        ZLIB=no                  \
+        all
+   
+   make -j1 PREFIX=/usr              \
+        SHAREDIR=/usr/share/misc \
+        MANDIR=/usr/share/man    \
+        SHARED=yes               \
+        ZLIB=no                  \
+        DESTDIR=$PKG install install-lib     
+   
+   chmod -v 755 $PKG/usr/lib/libpci.so.$version
+   
+
+    rm -fr $PKG/usr/share/info
+}

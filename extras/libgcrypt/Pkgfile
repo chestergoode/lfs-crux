@@ -1,0 +1,37 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libgcrypt
+version=1.5.3
+release=1
+source=(
+  ftp://ftp.gnupg.org/gcrypt/libgcrypt/libgcrypt-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr --disable-static
+   make
+   #make -C doc pdf ps html &&
+   #makeinfo --html --no-split -o doc/gcrypt_nochunks.html doc/gcrypt.texi &&
+   #makeinfo --plaintext       -o doc/gcrypt.txt           doc/gcrypt.texi
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install
+   #install -v -dm755   $PKG/usr/share/doc/libgcrypt-$version &&
+   #install -v -m644    README doc/{README.apichanges,fips*,libgcrypt*} \
+   #                    $PKG/usr/share/doc/libgcrypt-$version
+   #install -v -dm755   $PKG/usr/share/doc/libgcrypt-$version/html &&
+   #install -v -m644 doc/gcrypt.html/* \
+   #                    $PKG/usr/share/doc/libgcrypt-$version/html &&
+   #install -v -m644 doc/gcrypt_nochunks.html \
+   #                    $PKG/usr/share/doc/libgcrypt-$version &&
+   #install -v -m644 doc/gcrypt.{pdf,ps,dvi,txt,texi} \
+   #                    $PKG/usr/share/doc/libgcrypt-$version
+}

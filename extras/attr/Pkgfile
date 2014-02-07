@@ -1,0 +1,36 @@
+# Description: Extented attributes library
+# URL:         http://savannah.nongnu.org/projects/attr/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=attr
+version=2.4.47
+release=1
+source=(http://download-mirror.savannah.gnu.org/releases/$name/$name-$version.src.tar.gz)
+
+build() {
+    cd $name-$version
+
+    sed -i -e 's|/@pkg_name@|&-@pkg_version@|' include/builddefs.in
+
+    INSTALL_USER=root  \
+    INSTALL_GROUP=root \
+    ./configure --prefix=/usr # --disable-static
+    make
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make tests root-tests ext-tests || true
+        echo =============== TESTING end
+    fi
+
+    make DIST_ROOT=$PKG install install-lib install-dev
+
+    install -d $PKG/lib
+    chmod -v 755 $PKG/usr/lib/libattr.so
+    install -d $PKG/lib
+    mv -v $PKG/usr/lib/libattr.so.* $PKG/lib
+    ln -sfv ../../lib/libattr.so.1 $PKG/usr/lib/libattr.so
+
+    rm -fr $PKG/usr/share/info
+}

@@ -1,0 +1,32 @@
+# Description: Transport Independent RPC library
+# Maintainer:  Juergen Daubert, jue at crux dot nu
+# URL:         http://nfsv4.bullopensource.org/doc/tirpc_rpcbind.php
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libtirpc
+version=0.2.3
+release=1
+source=(
+  http://downloads.sourceforge.net/project/libtirpc/libtirpc/$version/libtirpc-$version.tar.bz2 \
+  http://www.linuxfromscratch.org/patches/blfs/svn/libtirpc-$version-remove_nis-1.patch
+)
+
+build() {
+   cd $name-$version
+   patch -Np1 -i ../libtirpc-$version-remove_nis-1.patch
+   sed "s@AM_CONFIG_HEADER@AC_CONFIG_HEADERS@g" -i configure.ac
+   autoreconf -fi
+   
+   ./configure --prefix=/usr --sysconfdir=/etc CFLAGS="-fPIC"
+   make
+   make -j1 DESTDIR=$PKG install
+   mkdir $PKG/lib
+   mv -v $PKG/usr/lib/libtirpc.so.* $PKG/lib
+   ln -sfv ../../lib/libtirpc.so.1.0.10 $PKG/usr/lib/libtirpc.so
+
+    rm -fr $PKG/usr/share/info
+}

@@ -1,0 +1,38 @@
+# Description: Access Control Lists library
+# URL:         http://savannah.nongnu.org/projects/acl
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  attr
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=nettle
+version=2.7.1
+release=1
+source=(
+  http://ftp.gnu.org/gnu/nettle/nettle-$version.tar.gz
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr
+   make
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+
+   #sed -i '/^install-here/ s/install-static//' Makefile
+
+   make DESTDIR=$PKG install
+   chmod -v 755 $PKG/usr/lib/libhogweed.so.2.5 $PKG/usr/lib/libnettle.so.4.7
+  
+   install -v -m755 -d $PKG/usr/share/doc/nettle-2.7.1
+   install -v -m644 nettle.html $PKG/usr/share/doc/nettle-2.7.1
+
+    rm -fr $PKG/usr/share/info
+}

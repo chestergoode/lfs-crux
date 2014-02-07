@@ -1,0 +1,38 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=pcre
+version=8.33
+release=1
+source=(
+  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr                     \
+               --docdir=/usr/share/doc/pcre-$version \
+               --enable-utf                      \
+               --enable-unicode-properties       \
+               --enable-pcre16                   \
+               --enable-pcre32                   \
+               --enable-pcregrep-libz            \
+               --enable-pcregrep-libbz2          \
+               --enable-pcretest-libreadline     \
+               --disable-static                
+   make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install                    
+   mkdir $PKG/lib
+   mv -v $PKG/usr/lib/libpcre.so.* $PKG/lib
+   ln -sfv ../../lib/$(readlink $PKG/usr/lib/libpcre.so) $PKG/usr/lib/libpcre.so
+
+    rm -fr $PKG/usr/share/info
+}

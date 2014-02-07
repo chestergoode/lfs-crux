@@ -1,0 +1,62 @@
+#!/bin/bash
+set -e
+
+
+PKG_DIR=libpng
+
+#===name=libpng
+mkdir -p $SRC_DIR/$PKG_DIR
+cd $SRC_DIR/$PKG_DIR
+#===version=libpng-1.6.4.tar.xz
+if [[ ! -f $PACKAGE ]] ; then
+  if [[ -f $SRC_ARCHIVE/$PKG_DIR/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PKG_DIR/$PACKAGE $PACKAGE
+  elif [[ -f $SRC_ARCHIVE/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PACKAGE $PACKAGE
+  else
+    wget -T 30 -t 5 ${FTP_SERVER}svn/l/$PACKAGE || \
+    wget -T 30 -t 5 http://downloads.sourceforge.net/libpng/libpng-1.6.4.tar.xz
+    cp $PACKAGE $SRC_ARCHIVE
+  fi
+fi
+echo "c223da07809a132335dbc658253b438a  $PACKAGE" | md5sum -c -
+PATCH=libpng-1.6.3-apng.patch.gz
+if [[ ! -f $PATCH ]] ; then
+  if [[ -f $SRC_ARCHIVE/$PKG_DIR/$PATCH ]] ; then
+    cp $SRC_ARCHIVE/$PKG_DIR/$PATCH $PATCH
+  elif [[ -f $SRC_ARCHIVE/$PATCH ]] ; then
+    cp $SRC_ARCHIVE/$PATCH $PATCH
+  else
+wget -T 30 -t 5 http://downloads.sourceforge.net/libpng-apng/libpng-1.6.3-apng.patch.gz
+
+    cp $PATCH $SRC_ARCHIVE
+  fi
+fi
+
+
+if [ "${PACKAGE%.zip}" = "${PACKAGE}" ]; then
+ if [[ -e unpacked ]] ; then
+  UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+  [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP2 rm -rf $UNPACKDIR
+ fi
+ tar -xvf $PACKAGE > unpacked
+ UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+else
+ UNPACKDIR=${PACKAGE%.zip}
+ [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP3 rm -rf $UNPACKDIR
+ unzip -d $UNPACKDIR ${PACKAGE}
+fi
+#========== UNPACKDIR cd $UNPACKDIR
+gzip -cd ../libpng-1.6.3-apng.patch.gz | patch -p1
+./configure --prefix=/usr --disable-static &&
+make
+#make -k check || true
+make -j1 install &&
+mkdir -v /usr/share/doc/libpng-1.6.4 &&
+cp -v README libpng-manual.txt /usr/share/doc/libpng-1.6.4
+#===== LDCONFIG1ldconfig
+
+cd $SRC_DIR/$PKG_DIR
+#===CLEANUP1 rm -rf $UNPACKDIR unpacked
+
+exit

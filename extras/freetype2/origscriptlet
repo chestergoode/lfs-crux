@@ -1,0 +1,69 @@
+#!/bin/bash
+set -e
+
+
+PKG_DIR=freetype2
+
+#===name=freetype2
+mkdir -p $SRC_DIR/$PKG_DIR
+cd $SRC_DIR/$PKG_DIR
+#===version=freetype-2.5.0.1.tar.bz2
+if [[ ! -f $PACKAGE ]] ; then
+  if [[ -f $SRC_ARCHIVE/$PKG_DIR/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PKG_DIR/$PACKAGE $PACKAGE
+  elif [[ -f $SRC_ARCHIVE/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PACKAGE $PACKAGE
+  else
+    wget -T 30 -t 5 ${FTP_SERVER}svn/f/$PACKAGE || \
+    wget -T 30 -t 5 http://downloads.sourceforge.net/freetype/freetype-2.5.0.1.tar.bz2
+    cp $PACKAGE $SRC_ARCHIVE
+  fi
+fi
+echo "c72e9010b1d986d556fc0b2b5fcbf31a  $PACKAGE" | md5sum -c -
+PACKAGE1=freetype-doc-2.5.0.tar.bz2
+if [[ ! -f $PACKAGE1 ]] ; then
+  if [[ -f $SRC_ARCHIVE/$PKG_DIR/$PACKAGE1 ]] ; then
+    cp $SRC_ARCHIVE/$PKG_DIR/$PACKAGE1 $PACKAGE1
+  elif [[ -f $SRC_ARCHIVE/$PACKAGE1 ]] ; then
+    cp $SRC_ARCHIVE/$PACKAGE1 $PACKAGE1
+  else
+    wget -T 30 -t 5 ${FTP_SERVER}svn/f/$PACKAGE1 || \
+    wget -T 30 -t 5 http://downloads.sourceforge.net/freetype/freetype-doc-2.5.0.tar.bz2
+    cp $PACKAGE1 $SRC_ARCHIVE
+  fi
+fi
+echo "40f3d5cc0b16396b3fb6b98eeaa053b2  $PACKAGE1" | md5sum -c -
+
+
+if [ "${PACKAGE%.zip}" = "${PACKAGE}" ]; then
+ if [[ -e unpacked ]] ; then
+  UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+  [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP2 rm -rf $UNPACKDIR
+ fi
+ tar -xvf $PACKAGE > unpacked
+ UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+else
+ UNPACKDIR=${PACKAGE%.zip}
+ [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP3 rm -rf $UNPACKDIR
+ unzip -d $UNPACKDIR ${PACKAGE}
+fi
+#========== UNPACKDIR cd $UNPACKDIR
+tar -xf ../freetype-doc-2.5.0.tar.bz2 --strip-components=2 -C docs
+sed -i  -e "/AUX.*.gxvalid/s@^# @@" \
+        -e "/AUX.*.otvalid/s@^# @@" \
+        modules.cfg                         &&
+
+sed -ri -e 's:.*(#.*SUBPIXEL.*) .*:\1:' \
+        include/freetype/config/ftoption.h  &&
+
+./configure --prefix=/usr --disable-static  &&
+make
+make -j1 install &&
+install -v -m755 -d /usr/share/doc/freetype-2.5.0.1 &&
+cp -v -R docs/*     /usr/share/doc/freetype-2.5.0.1
+#===== LDCONFIG1ldconfig
+
+cd $SRC_DIR/$PKG_DIR
+#===CLEANUP1 rm -rf $UNPACKDIR unpacked
+
+exit

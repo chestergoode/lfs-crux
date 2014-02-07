@@ -1,0 +1,48 @@
+#!/bin/bash
+set -e
+
+
+PKG_DIR=libgpg-error
+
+#===name=libgpg-error
+mkdir -p $SRC_DIR/$PKG_DIR
+cd $SRC_DIR/$PKG_DIR
+#===version=libgpg-error-1.12.tar.bz2
+if [[ ! -f $PACKAGE ]] ; then
+  if [[ -f $SRC_ARCHIVE/$PKG_DIR/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PKG_DIR/$PACKAGE $PACKAGE
+  elif [[ -f $SRC_ARCHIVE/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PACKAGE $PACKAGE
+  else
+    wget -T 30 -t 5 ${FTP_SERVER}svn/l/$PACKAGE || \
+    wget -T 30 -t 5 ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.12.tar.bz2
+    cp $PACKAGE $SRC_ARCHIVE
+  fi
+fi
+echo "8f0eb41a344d19ac2aa9bd101dfb9ce6  $PACKAGE" | md5sum -c -
+
+
+if [ "${PACKAGE%.zip}" = "${PACKAGE}" ]; then
+ if [[ -e unpacked ]] ; then
+  UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+  [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP2 rm -rf $UNPACKDIR
+ fi
+ tar -xvf $PACKAGE > unpacked
+ UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+else
+ UNPACKDIR=${PACKAGE%.zip}
+ [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP3 rm -rf $UNPACKDIR
+ unzip -d $UNPACKDIR ${PACKAGE}
+fi
+#========== UNPACKDIR cd $UNPACKDIR
+./configure --prefix=/usr --disable-static &&
+make
+#make -k check || true
+make -j1 install &&
+install -v -m644 -D README /usr/share/doc/libgpg-error-1.12/README
+#===== LDCONFIG1ldconfig
+
+cd $SRC_DIR/$PKG_DIR
+#===CLEANUP1 rm -rf $UNPACKDIR unpacked
+
+exit

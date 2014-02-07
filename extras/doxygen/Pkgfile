@@ -1,0 +1,20 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=doxygen
+version=1.8.5
+release=1
+source=(
+  ftp://ftp.stack.nl/pub/doxygen/doxygen-$version.src.tar.gz
+)
+
+build() {
+    cd $name-$version
+    ./configure --prefix $PKG/usr \
+               --docdir $PKG/usr/share/doc/doxygen-$version &&
+    make
+    make -j1 DESTDIR=$PKG install
+    #make -j1 DESTDIR=$PKG install_docs
+}

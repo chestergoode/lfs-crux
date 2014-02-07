@@ -1,0 +1,21 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libisoburn
+version=1.3.2
+release=1
+source=(
+  http://files.libburnia-project.org/releases/libisoburn-$version.tar.gz
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr --disable-static
+   make
+   #doxygen doc/doxygen.conf
+   make -j1 DESTDIR=$PKG install
+   install -v -dm755 $PKG/usr/share/doc/libisoburn-$version
+   #install -v -m644 doc/html/* $PKG/usr/share/doc/libisoburn-$version
+}

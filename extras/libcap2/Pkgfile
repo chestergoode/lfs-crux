@@ -1,0 +1,18 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libcap2
+version=2.22
+release=1
+source=(
+  ftp://ftp.de.debian.org/debian/pool/main/libc/libcap2/libcap2_$version.orig.tar.gz
+)
+
+build() {
+    cd libcap-$version
+    make
+    sed -i '/install.*STALIBNAME/ s/^/#/' libcap/Makefile
+    make -j1 RAISE_SETFCAP=no DESTDIR=$PKG install
+}

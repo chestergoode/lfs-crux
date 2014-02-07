@@ -1,0 +1,19 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=wireless_tools
+version=29
+release=1
+source=(
+  http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/wireless_tools.$version.tar.gz
+)
+
+build() {
+   cd $name.$version
+   make
+   make -j1 PREFIX=$PKG/usr INSTALL_MAN=$PKG/usr/share/man install
+
+    rm -fr $PKG/usr/share/info
+}

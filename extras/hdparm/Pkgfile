@@ -1,0 +1,24 @@
+# Description: A shell utility for manipulating Linux IDE drive/driver parameters
+# URL:         http://sourceforge.net/projects/hdparm/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=hdparm
+version=9.43
+release=1
+source=(
+  http://downloads.sourceforge.net/hdparm/hdparm-$version.tar.gz
+)
+
+build() {
+   cd $name-$version
+   make
+   make -j1 DESTDIR=$PKG install
+   #make -j1 binprefix=$PKG/usr/ install
+
+    rm -fr $PKG/usr/share/info
+}

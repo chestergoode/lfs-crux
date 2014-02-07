@@ -1,0 +1,40 @@
+# Description: Mail transfer agent
+# URL:         http://www.exim.org
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  db openssl libpcre tcp_wrappers
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=exim
+version=4.80.1
+release=1
+source=(
+  ftp://ftp.exim.org/pub/exim/exim4/exim-$version.tar.bz2 \
+  http://exim.org/docs.html \
+  http://www.linuxfromscratch.org/blfs/downloads/svn/blfs-bootscripts-20130908.tar.bz2 \
+  aliases
+)
+
+build() {
+    cd $name-$version
+   #groupadd -g 31 exim &&
+   #useradd -d $PKG/dev/null -c "Exim Daemon" -g exim -s $PKG/bin/false -u 31 exim
+   sed -e 's,^BIN_DIR.*$,BIN_DIRECTORY=/usr/sbin,' \
+       -e 's,^CONF.*$,CONFIGURE_FILE=/etc/exim.conf,' \
+       -e 's,^EXIM_USER.*$,EXIM_USER=exim,' \
+       -e 's,^EXIM_MONITOR,#EXIM_MONITOR,' src/EDITME > Local/Makefile &&
+   make
+   make -j1 DESTDIR=$PKG install &&
+   install -v -m644 doc/exim.8 $PKG/usr/share/man/man8 &&
+   install -v -d -m755 $PKG/usr/share/doc/exim-$version &&
+   install -v -m644 doc/* $PKG/usr/share/doc/exim-$version &&
+   ln -sv exim $PKG/usr/sbin/sendmail
+   
+   cp $SRC/aliases $PKG/etc/aliases
+   cd $SRC/blfs-bootscripts-*
+   make DESTDIR=$PKG install-exim
+
+    rm -fr $PKG/usr/share/info
+}

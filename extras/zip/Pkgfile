@@ -1,0 +1,22 @@
+# Description: Compression and file packaging/archive utility
+# URL:         http://infozip.sourceforge.net/Zip.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  bzip2
+# Description: Decompress utility for zipfiles
+# URL:         http://infozip.sourceforge.net/UnZip.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=zip
+version=30
+release=1
+source=(
+http://downloads.sourceforge.net/infozip/zip$version.tar.gz
+)
+
+build() {
+    cd ${name}${version}
+    make -f unix/Makefile generic_gcc
+    make prefix=$PKG/usr -f unix/Makefile install
+
+    rm -fr $PKG/usr/share/info
+}

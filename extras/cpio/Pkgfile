@@ -1,0 +1,47 @@
+# Description: A tool to copy files into or out of a cpio or tar archive
+# URL:         http://www.gnu.org/software/cpio/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=cpio
+version=2.11
+release=1
+source=(
+  ftp://ftp.gnu.org/pub/gnu/cpio/cpio-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   sed -i -e '/gets is a/d' gnu/stdio.in.h
+   ./configure --prefix=/usr     \
+               --bindir=/bin     \
+               --libexecdir=/tmp \
+               --enable-mt       \
+               --with-rmt=/usr/sbin/rmt
+   make
+   makeinfo --html            -o doc/html      doc/cpio.texi
+   makeinfo --html --no-split -o doc/cpio.html doc/cpio.texi
+   makeinfo --plaintext       -o doc/cpio.txt  doc/cpio.texi
+   #make -C doc pdf
+   #make -C doc ps
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install
+   install -v -m755 -d $PKG/usr/share/doc/cpio-$version/html
+   install -v -m644    doc/html/* \
+                       $PKG/usr/share/doc/cpio-$version/html
+   install -v -m644    doc/cpio.{html,txt} \
+                       $PKG/usr/share/doc/cpio-$version
+   #install -v -m644 doc/cpio.{pdf,ps,dvi} $PKG/usr/share/doc/cpio-$version
+   
+
+    rm -fr $PKG/usr/share/info
+}

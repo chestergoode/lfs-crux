@@ -1,0 +1,27 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=apr
+version=1.4.8
+release=1
+source=(
+  ftp://ftp.mirrorservice.org/sites/ftp.apache.org/apr/apr-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr --disable-static \
+     --with-installbuilddir=/usr/share/apr-1/build &&
+   make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k test || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

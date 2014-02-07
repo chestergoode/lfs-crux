@@ -1,0 +1,63 @@
+# Description: Secure SHell server and client tools
+# URL:         http://www.openssh.org/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  openssl zlib tcp_wrappers
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=openssh
+version=6.3p1
+release=1
+source=(
+  ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-$version.tar.gz \
+  http://www.linuxfromscratch.org/blfs/downloads/svn/blfs-bootscripts-20130908.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   install -v -m700 -d $PKG/var/lib/sshd
+   chown   -v root:sys $PKG/var/lib/sshd
+   
+   #groupadd -g 50 sshd
+   #useradd -c 'sshd PrivSep' -d $PKG/var/lib/sshd -g sshd -s $PKG/bin/false -u 50 sshd
+   ./configure --prefix=/usr                     \
+               --libexecdir=/usr/lib/openssh     \
+               --sysconfdir=/etc/ssh             \
+               --datadir=/usr/share/sshd         \
+               --with-md5-passwords              \
+               --with-privsep-path=/var/lib/sshd
+   make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k tests || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install                                 
+   install -v -m755 contrib/ssh-copy-id $PKG/usr/bin
+   install -v -m644 contrib/ssh-copy-id.1 $PKG/usr/share/man/man1
+   install -v -m755 -d $PKG/usr/share/doc/openssh-$version          
+   install -v -m644 INSTALL LICENCE OVERVIEW README* $PKG/usr/share/doc/openssh-$version
+   
+   echo "PermitRootLogin no" >> $PKG/etc/ssh/sshd_config
+
+   #ssh-keygen
+   #public_key="$(cat ~/.ssh/id_rsa.pub)"
+   #ssh REMOTE_HOSTNAME "echo ${public_key} >> ~/.ssh/authorized_keys"
+   #unset public_key
+   
+   #echo "PasswordAuthentication no" >> $PKG/etc/ssh/sshd_config
+   #echo "ChallengeResponseAuthentication no" >> $PKG/etc/ssh/sshd_config
+   
+   #sed 's@d/login@d/sshd@g' $PKG/etc/pam.d/login > $PKG/etc/pam.d/sshd
+   #chmod 644 $PKG/etc/pam.d/sshd
+   #echo "UsePAM yes" >> $PKG/etc/ssh/sshd_config
+
+   cd $SRC/blfs-bootscripts-*
+   make DESTDIR=$PKG install-sshd
+   
+
+    rm -fr $PKG/usr/share/info
+}

@@ -1,0 +1,34 @@
+# Description: An RFC2131-compliant DHCP client daemon
+# URL:         http://roy.marples.name/dhcpcd
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=dhcpcd
+version=6.0.5
+release=1
+source=(
+  ftp://ftp.osuosl.org/pub/gentoo/distfiles/dhcpcd-$version.tar.bz2 \
+  http://www.linuxfromscratch.org/blfs/downloads/svn/blfs-bootscripts-20130908.tar.bz2 \
+  ifconfig.eth0
+)
+
+build() {
+   cd $name-$version
+   ./configure --libexecdir=/lib/dhcpcd \
+               --dbdir=/run             \
+               --sysconfdir=/etc
+   make
+   make DESTDIR=$PKG install
+   sed -i "s;/var/lib;/run;g" dhcpcd-hooks/50-dhcpcd-compat
+   install -v -m 644 dhcpcd-hooks/50-dhcpcd-compat $PKG/lib/dhcpcd/dhcpcd-hooks/
+   
+   cd ../blfs-bootscripts-*
+   make -j1 DESTDIR=$PKG install-service-dhcpcd
+   install $SRC/ifconfig.eth0 $PKG/etc/sysconfig/ifconfig.eth0
+
+    rm -fr $PKG/usr/share/info
+}

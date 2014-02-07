@@ -1,0 +1,25 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libgpg-error
+version=1.12
+release=1
+source=(
+  ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr --disable-static &&
+   make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install &&
+   install -v -m644 -D README $PKG/usr/share/doc/libgpg-error-$version/README
+}

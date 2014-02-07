@@ -1,0 +1,36 @@
+# Description: Access Control Lists library
+# URL:         http://savannah.nongnu.org/projects/acl
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  attr
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=acl
+version=2.2.52
+release=1
+source=(
+  http://download.savannah.gnu.org/releases/acl/acl-$version.src.tar.gz
+)
+
+build() {
+   cd $name-$version
+   sed -i -e 's|/@pkg_name@|&-@pkg_version@|' \
+        include/builddefs.in
+   
+   INSTALL_USER=root  \
+   INSTALL_GROUP=root \
+   ./configure --prefix=/usr --libexecdir=/usr/lib --disable-static
+   make
+   make -j1 DESTDIR=$PKG install install-dev install-lib            
+   chmod -v 755 $PKG/usr/lib/libacl.so                 
+   mkdir $PKG/lib
+   mv -v $PKG/usr/lib/libacl.so.* $PKG/lib                 
+   ln -sfv ../../lib/libacl.so.1 $PKG/usr/lib/libacl.so
+   install -v -m644 doc/*.txt $PKG/usr/share/doc/acl-$version
+   #make -k tests  || true
+   #make -k  || true
+
+    rm -fr $PKG/usr/share/info
+}

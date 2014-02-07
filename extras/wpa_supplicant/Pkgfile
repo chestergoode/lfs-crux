@@ -1,0 +1,59 @@
+# Description: User space IEEE 802.1X/WPA supplicant (wireless client) 
+# URL:         http://hostap.epitest.fi/wpa_supplicant/
+# Maintainer:  Juergen Daubert, jue at crux dot nu
+# Depends on:  openssl ncurses readline libnl
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=wpa_supplicant
+version=2.0
+release=1
+source=(
+  http://hostap.epitest.fi/releases/wpa_supplicant-$version.tar.gz \
+  wpabld.config wpanetman.config wpa_supplicant_open.conf ifconfig.wifi0\
+  http://www.linuxfromscratch.org/blfs/downloads/svn/blfs-bootscripts-20130908.tar.bz2
+)
+
+build() {
+   cd $name-$version/wpa_supplicant
+
+   cp $SRC/wpabld.config .config
+   #cat $SRC/wpabld.config $SRC/wpanetman.config >.config
+   make BINDIR=/sbin LIBDIR=/lib
+
+   #pushd wpa_gui-qt4
+   #qmake wpa_gui.pro
+   #make
+   #popd
+
+   mkdir $PKG/sbin
+   install -v -m755 wpa_{cli,passphrase,supplicant} $PKG/sbin/
+   mkdir -pv $PKG/usr/share/man/{man5,man8}
+   install -v -m644 doc/docbook/wpa_supplicant.conf.5 $PKG/usr/share/man/man5/
+   install -v -m644 doc/docbook/wpa_{cli,passphrase,supplicant}.8 $PKG/usr/share/man/man8/
+
+   #install -v -m644 dbus/fi.{epitest.hostap.WPASupplicant,w1.wpa_supplicant1}.service \
+                    #$PKG/usr/share/dbus-1/system-services/
+   #install -v -m644 dbus/dbus-wpa_supplicant.conf \
+                    #$PKG/etc/dbus-1/system.d/wpa_supplicant.conf
+   #install -v -m755 wpa_gui-qt4/wpa_gui $PKG/usr/bin/
+   #install -v -m644 doc/docbook/wpa_gui.8 $PKG/usr/share/man/man8/
+   #install -v -m644 wpa_gui-qt4/wpa_gui.desktop $PKG/usr/share/applications/
+   #install -v -m644 wpa_gui-qt4/icons/wpa_gui.svg $PKG/usr/share/pixmaps/
+   #update-desktop-database
+   
+   #wpa_passphrase **EDITMESSIDEDITME** **EDITMESECRET_PASSWORDEDITME** > $PKG/etc/sysconfig/wpa_supplicant-**EDITMEwifi0EDITME**.conf
+   
+   mkdir -pv $PKG/etc/sysconfig
+   cp $SRC/wpa_supplicant_open.conf $PKG/etc/sysconfig/wpa_supplicant-wifi0.conf
+   
+   cd $SRC/blfs-bootscripts-*
+   make -j1 DESTDIR=$PKG install-service-wpa
+   
+   cp $SRC/ifconfig.wifi0 $PKG/etc/sysconfig/ifconfig.wifi0
+
+
+    rm -fr $PKG/usr/share/info
+}

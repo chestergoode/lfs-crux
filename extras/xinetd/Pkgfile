@@ -1,0 +1,62 @@
+# Description: Inetd daemon, FTP and telnet client
+# URL:         http://www.gnu.org/software/xinetd/xinetd.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  readline
+
+name=xinetd
+version=2.3.15
+release=1
+source=(http://ftp.gnu.org/gnu/xinetd/xinetd-$version.tar.gz \
+        http://www.linuxfromscratch.org/blfs/downloads/svn/blfs-bootscripts-20130908.tar.bz2 \
+        xinetd-002-destdir.patch \
+        xinetd.conf xinetd chargen comsat daytime echo exec finger
+	ftp irc login netstat ntalk rquotad rstatd rusersd
+	shell sprayd systat talk telnet time walld )
+
+build() {
+    cd xinetd-$version
+    sed -i -e "/^LIBS/s/-lpset/& -ltirpc/" xinetd/Makefile.in 
+    sed -i -e "/register unsigned count/s/register//" xinetd/itox.c
+
+    cat $SRC/xinetd-002-destdir.patch |patch -Np1
+    ./configure --prefix=/usr --with-loadavg 
+    make
+
+    make DESTDIR=$PKG install
+
+    install -d $PKG/etc/rc.d
+    install -m 644 $SRC/xinetd.conf $PKG/etc
+    install -d -m 755 $PKG/etc/xinetd.d
+
+    install -m 644 $SRC/chargen $PKG/etc/xinetd.d
+    install -m 644 $SRC/comsat $PKG/etc/xinetd.d
+    install -m 644 $SRC/daytime $PKG/etc/xinetd.d
+    install -m 644 $SRC/echo $PKG/etc/xinetd.d
+    install -m 644 $SRC/exec $PKG/etc/xinetd.d
+    install -m 644 $SRC/finger $PKG/etc/xinetd.d
+    install -m 644 $SRC/ftp $PKG/etc/xinetd.d
+    install -m 644 $SRC/irc $PKG/etc/xinetd.d
+    install -m 644 $SRC/login $PKG/etc/xinetd.d
+    install -m 644 $SRC/netstat $PKG/etc/xinetd.d
+    install -m 644 $SRC/ntalk $PKG/etc/xinetd.d
+    install -m 644 $SRC/rquotad $PKG/etc/xinetd.d
+    install -m 644 $SRC/rstatd $PKG/etc/xinetd.d
+    install -m 644 $SRC/rusersd $PKG/etc/xinetd.d
+    install -m 644 $SRC/shell $PKG/etc/xinetd.d
+    install -m 644 $SRC/sprayd $PKG/etc/xinetd.d
+    install -m 644 $SRC/systat $PKG/etc/xinetd.d
+    install -m 644 $SRC/talk $PKG/etc/xinetd.d
+    install -m 644 $SRC/telnet $PKG/etc/xinetd.d
+    install -m 644 $SRC/time $PKG/etc/xinetd.d
+    install -m 644 $SRC/walld $PKG/etc/xinetd.d
+
+    install -m 755 $SRC/xinetd $PKG/etc/rc.d
+
+   cd $SRC/blfs-bootscripts-*
+   make DESTDIR=$PKG install-xinetd
+   
+
+#    rm -r $PKG/usr/share
+
+    rm -fr $PKG/usr/share/info
+}

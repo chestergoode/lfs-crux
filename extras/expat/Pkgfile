@@ -1,0 +1,27 @@
+# Description: A fast, non-validating, stream-oriented XML parsing library
+# URL:         http://expat.sourceforge.net/
+# Maintainer:  Juergen Daubert, jue at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=expat
+version=2.1.0
+release=1
+source=(
+  http://downloads.sourceforge.net/expat/expat-$version.tar.gz
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr --disable-static
+   make
+
+   make -j1 DESTDIR=$PKG install                    
+   install -v -m755 -d $PKG/usr/share/doc/expat-$version
+   install -v -m644 doc/*.{html,png,css} $PKG/usr/share/doc/expat-$version
+
+    rm -fr $PKG/usr/share/info
+}

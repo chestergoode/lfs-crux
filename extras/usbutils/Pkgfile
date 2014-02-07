@@ -1,0 +1,27 @@
+# Description: pciutils-like utilities for USB
+# URL:         https://github.com/gregkh/usbutils
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# Depends on:  libusb
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=usbutils
+version=007
+release=1
+source=(
+  ftp://ftp.kernel.org/pub/linux/utils/usb/usbutils/usbutils-$version.tar.xz
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr  \
+               --disable-zlib \
+               --datadir=/usr/share/misc
+   make
+   make -j1 DESTDIR=$PKG install
+   mv -v $PKG/usr/sbin/update-usbids.sh $PKG/usr/sbin/update-usbids
+
+    rm -fr $PKG/usr/share/info
+}

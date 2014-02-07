@@ -1,0 +1,23 @@
+name=lynx
+version=2.8.8
+release=1
+source=(
+http://lynx.isc.org/current/lynx2.8.8dev.16.tar.bz2
+)
+
+build() {
+    cd ${name}2-8-8
+    ./configure --prefix=/usr          \
+            --sysconfdir=/etc/lynx \
+            --datadir=/usr/share/doc/lynx-$versiondev.16 \
+            --with-zlib            \
+            --with-bzlib           \
+            --with-screen=ncursesw \
+            --enable-locale-charset
+    echo "#define USE_OPENSSL_INCL 1" >> lynx_cfg.h
+    make
+    make DESTDIR=$PKG install-full
+    chgrp -v -R root $PKG/usr/share/doc/lynx-$versiondev.16/lynx_doc
+
+    rm -fr $PKG/usr/share/info
+}

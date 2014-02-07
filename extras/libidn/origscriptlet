@@ -1,0 +1,53 @@
+#!/bin/bash
+set -e
+
+
+PKG_DIR=libidn
+
+#===name=libidn
+mkdir -p $SRC_DIR/$PKG_DIR
+cd $SRC_DIR/$PKG_DIR
+#===version=libidn-1.28.tar.gz
+if [[ ! -f $PACKAGE ]] ; then
+  if [[ -f $SRC_ARCHIVE/$PKG_DIR/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PKG_DIR/$PACKAGE $PACKAGE
+  elif [[ -f $SRC_ARCHIVE/$PACKAGE ]] ; then
+    cp $SRC_ARCHIVE/$PACKAGE $PACKAGE
+  else
+    wget -T 30 -t 5 ${FTP_SERVER}svn/l/$PACKAGE || \
+    wget -T 30 -t 5 http://ftp.gnu.org/gnu/libidn/libidn-1.28.tar.gz || \
+    wget -T 30 -t 5 ftp://ftp.gnu.org/gnu/libidn/libidn-1.28.tar.gz
+    cp $PACKAGE $SRC_ARCHIVE
+  fi
+fi
+echo "43a6f14b16559e10a492acc65c4b0acc  $PACKAGE" | md5sum -c -
+
+
+if [ "${PACKAGE%.zip}" = "${PACKAGE}" ]; then
+ if [[ -e unpacked ]] ; then
+  UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+  [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP2 rm -rf $UNPACKDIR
+ fi
+ tar -xvf $PACKAGE > unpacked
+ UNPACKDIR=`grep '[^./]\+' unpacked | head -n1 | sed 's@^./@@;s@/.*@@'`
+else
+ UNPACKDIR=${PACKAGE%.zip}
+ [[ -n $UNPACKDIR ]] && [[ -d $UNPACKDIR ]] && #=== CLEANUP3 rm -rf $UNPACKDIR
+ unzip -d $UNPACKDIR ${PACKAGE}
+fi
+#========== UNPACKDIR cd $UNPACKDIR
+./configure --prefix=/usr --disable-static &&
+make
+#make -k check || true
+make -j1 install &&
+
+find doc -name "Makefile*" -delete            &&
+rm -rf -v doc/{gdoc,idn.1,stamp-vti,man,texi} &&
+mkdir -v       /usr/share/doc/libidn-1.28     &&
+cp -r -v doc/* /usr/share/doc/libidn-1.28
+#===== LDCONFIG1ldconfig
+
+cd $SRC_DIR/$PKG_DIR
+#===CLEANUP1 rm -rf $UNPACKDIR unpacked
+
+exit

@@ -1,0 +1,42 @@
+# Description: A Linux kernel packet filter control tool
+# URL:         http://www.iptables.org/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=iptables
+version=1.4.20
+release=1
+source=(
+  ftp://ftp.netfilter.org/pub/iptables/iptables-$version.tar.bz2 \
+  http://www.linuxfromscratch.org/blfs/downloads/svn/blfs-bootscripts-20130908.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr                          \
+               --exec-prefix=                         \
+               --bindir=/usr/bin                      \
+               --with-xtlibdir=/lib/xtables           \
+               --with-pkgconfigdir=/usr/lib/pkgconfig \
+               --enable-libipq                        \
+               --enable-devel
+   make
+   make -j1 DESTDIR=$PKG install
+   ln -sfv ../../sbin/xtables-multi $PKG/usr/bin/iptables-xml
+   for file in libip4tc libip6tc libipq libiptc libxtables
+   do
+     ln -sfv ../../lib/`readlink $PKG/lib/${file}.so` $PKG/usr/lib/${file}.so
+     rm -v $PKG/lib/${file}.so
+     mv -v $PKG/lib/${file}.la $PKG/usr/lib
+     sed -i "s@libdir='@&/usr@g" $PKG/usr/lib/${file}.la
+   done
+
+   cd $SRC/blfs-bootscripts-*
+   make DESTDIR=$PKG install-iptables
+
+    rm -fr $PKG/usr/share/info
+}

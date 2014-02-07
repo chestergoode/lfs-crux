@@ -1,0 +1,26 @@
+# Description: Network utilities
+# URL:         http://www.tazenda.demon.co.uk/phil/net-tools/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=net-tools
+version=CVS_20101030
+release=1
+source=(
+  ftp://anduin.linuxfromscratch.org/BLFS/svn/n/net-tools-$version.tar.gz
+)
+
+build() {
+   cd $name-$version
+   sed -i -e '/Token/s/y$/n/'        config.in
+   sed -i -e '/HAVE_HWSTRIP/s/y$/n/' config.in
+   yes "" | make config
+   make
+   make -j1 DESTDIR=$PKG update
+
+    rm -fr $PKG/usr/share/info
+}

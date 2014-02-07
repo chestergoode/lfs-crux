@@ -1,0 +1,27 @@
+# Description: Library giving userland programs access to USB devices
+# URL:         http://libusb.sourceforge.net/
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libusb
+version=1.0.9
+release=1
+source=(
+  http://downloads.sourceforge.net/libusb/libusb-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr --disable-static
+   make
+   #make -C doc docs
+   make -j1 DESTDIR=$PKG install
+   #install -v -d -m755 $PKG/usr/share/doc/libusb-$version/apidocs
+   #install -v -m644    doc/html/* $PKG/usr/share/doc/libusb-$version/apidocs
+
+    rm -fr $PKG/usr/share/info
+}

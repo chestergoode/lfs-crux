@@ -1,0 +1,36 @@
+# Description: A tool for transfering files with URL syntax
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+# URL:         http://curl.haxx.se 
+# Depends on:  openssl, zlib
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=curl
+version=7.32.0
+release=1
+source=(
+  http://curl.haxx.se/download/curl-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr              \
+               --disable-static           \
+               --enable-threaded-resolver \
+               --with-ca-path=/etc/ssl/certs
+   make
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k test || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install
+   find docs \( -name "Makefile*" -o -name "*.1" -o -name "*.3" \) -exec rm {} \;
+   install -v -d -m755 $PKG/usr/share/doc/curl-$version
+   cp -v -R docs/*     $PKG/usr/share/doc/curl-$version
+
+    rm -fr $PKG/usr/share/info
+}

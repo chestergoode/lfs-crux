@@ -1,0 +1,25 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=bind-utils
+version=9.9.4
+release=1
+source=(
+  ftp://ftp.isc.org/isc/bind9/$version/bind-$version.tar.gz
+)
+
+build() {
+   cd bind-$version
+   ./configure --prefix=/usr
+   make -C lib/dns
+   make -C lib/isc
+   make -C lib/bind9
+   make -C lib/isccfg
+   make -C lib/lwres
+   make -C bin/dig
+   make -j1 DESTDIR=$PKG -C bin/dig install
+
+    rm -fr $PKG/usr/share/info
+}

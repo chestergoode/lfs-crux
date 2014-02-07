@@ -1,0 +1,37 @@
+
+name=Python
+version=2.7.5
+release=1
+source=(
+  http://www.python.org/ftp/python/$version/Python-$version.tar.xz
+)
+
+build () {
+   cd $name-$version
+   ./configure --prefix=/usr       \
+            --enable-shared     \
+            --with-system-expat \
+            --with-system-ffi   \
+            --enable-unicode=ucs4
+   make
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k test || true
+        echo =============== TESTING end
+    fi
+
+   make DESTDIR=$PKG install
+   chmod -v 755 $PKG/usr/lib/libpython2.7.so.1.0
+
+   #install -v -dm755 /usr/share/doc/python-$version
+   #tar --strip-components=1 -C /usr/share/doc/python-$version \
+       #-xvf ../python-$version-docs-html.tar.bz2                     
+   #find /usr/share/doc/python-$version -type d -exec chmod 0755 {} \;
+   #find /usr/share/doc/python-$version -type f -exec chmod 0644 {} \;
+
+   # export PYTHONDOCS=/usr/share/doc/python-$version
+
+    rm -fr $PKG/usr/share/info
+}

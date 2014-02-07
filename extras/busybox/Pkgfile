@@ -1,0 +1,30 @@
+# Description: Busybox
+# URL: http://www.busybox.net        
+# Maintainer:  
+
+name=busybox
+version=1.21.1
+release=1
+source=(
+  http://www.busybox.net/downloads/busybox-$version.tar.bz2 
+)
+#  http://www.busybox.net/downloads/fixes-$version/busybox-$version-sys-resource.patch
+
+build() {
+    cd ${name}-${version}
+    #cat $SRC/busybox-1.20.2-sys-resource.patch |patch -Np1
+
+    make defconfig
+    sed 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' -i .config
+
+    sed 's/CONFIG_FEATURE_HAVE_RPC=y/# CONFIG_FEATURE_HAVE_RPC is not set/' \
+        -i .config
+    sed 's/CONFIG_FEATURE_MOUNT_NFS=y/# CONFIG_FEATURE_MOUNT_NFS is not set/' \
+        -i .config
+    sed 's/CONFIG_FEATURE_INETD_RPC=y/# CONFIG_FEATURE_INETD_RPC is not set/' \
+        -i .config
+    make
+    make CONFIG_PREFIX=$PKG install
+
+    rm -fr $PKG/usr/share/info
+}

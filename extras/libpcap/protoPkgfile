@@ -1,0 +1,22 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=libpcap
+version=libpcap-1.4.0.tar.gz
+release=1
+source=(
+  http://www.tcpdump.org/release/libpcap-1.4.0.tar.gz
+)
+
+build() {
+    cd $name-$version
+    # Fixup this Pkgfile and then remove this exit
+    exit 1   # This Pkgfile has not yet been reviewed and corrected
+   ./configure --prefix=/usr &&
+   make
+   make -j1 DESTDIR=$PKG install
+   #===== LDCONFIG1ldconfig
+   
+}

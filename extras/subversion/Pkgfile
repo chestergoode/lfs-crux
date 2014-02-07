@@ -1,0 +1,45 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=subversion
+version=1.8.3
+release=1
+source=(
+  http://archive.apache.org/dist/subversion/subversion-$version.tar.bz2
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr    \
+               --disable-static \
+               --with-apache-libexecdir=$(/usr/bin/apxs -q libexecdir) &&
+   make
+   #make javahl
+   sed -i 's#Makefile.PL.in$#& libsvn_swig_perl#' Makefile.in
+   #make swig-pl &&
+   #make swig-py &&
+   #make swig-rb
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+   #make -k check-javahl || true
+   #make check-swig-pl &&
+   #make check-swig-py &&
+   #make check-swig-rb 
+   make -j1 DESTDIR=$PKG install &&
+   install -v -m755 -d $PKG/usr/share/doc/subversion-$version &&
+   cp      -v -R       doc/* \
+                       $PKG/usr/share/doc/subversion-$version
+   #make -j1 DESTDIR=$PKG install-javahl
+   #make -j1 DESTDIR=$PKG install-swig-pl &&
+   #make -j1 DESTDIR=$PKG install-swig-py swig_pydir=/usr/lib/python2.7/site-packages/libsvn \
+   #     swig_pydir_extra=/usr/lib/python2.7/site-packages/svn &&
+   #make -j1 DESTDIR=$PKG install-swig-rb
+
+    rm -fr $PKG/usr/share/info
+}

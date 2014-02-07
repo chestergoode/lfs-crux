@@ -1,0 +1,27 @@
+# Description: Berkeley DB
+# URL:         http://www.oracle.com/database/berkeley-db/index.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+
+name=db
+version=6.0.20
+release=1
+source=(http://download.oracle.com/berkeley-db/$name-$version.tar.gz)
+
+build() {
+   cd $name-$version/build_unix                       
+   ../dist/configure --prefix=/usr      \
+                  --enable-compat185 \
+                  --enable-dbm       \
+                  --disable-static   \
+                  --enable-cxx      
+   make
+   make DESTDIR=$PKG docdir=/usr/share/doc/db-$version install
+   chown -v -R root:root                        \
+      $PKG/usr/bin/db_*                          \
+      $PKG/usr/include/db{,_185,_cxx}.h          \
+      $PKG/usr/lib/libdb*.{so,la}                \
+      $PKG/usr/share/doc/db-$version
+
+    rm -fr $PKG/usr/share/info
+}

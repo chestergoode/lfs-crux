@@ -1,0 +1,28 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=screen
+version=screen-4.0.3.tar.gz
+release=1
+source=(
+  ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-4.0.3.tar.gz
+)
+
+build() {
+    cd $name-$version
+    # Fixup this Pkgfile and then remove this exit
+    exit 1   # This Pkgfile has not yet been reviewed and corrected
+   ./configure --prefix=/usr                     \
+               --with-socket-dir=/var/run/screen \
+               --with-pty-group=5                \
+               --with-sys-screenrc=/etc/screenrc &&
+   
+   sed -i -e "s%/usr/local/etc/screenrc%/etc/screenrc%" {etc,doc}/* &&
+   make
+   make -j1 DESTDIR=$PKG install &&
+   install -m 644 etc/etcscreenrc $PKG/etc/screenrc
+   #===== LDCONFIG1ldconfig
+   
+}

@@ -1,0 +1,63 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=git
+version=1.8.4
+release=1
+source=(
+  http://git-core.googlecode.com/files/git-$version.tar.gz \
+  http://git-core.googlecode.com/files/git-manpages-$version.tar.gz \
+  http://git-core.googlecode.com/files/git-htmldocs-$version.tar.gz
+)
+
+build() {
+   cd $name-$version
+   ./configure --prefix=/usr \
+               --libexecdir=/usr/lib \
+               --with-gitconfig=/etc/gitconfig
+   make
+   #make html
+   #make man
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k test || true
+        echo =============== TESTING end
+    fi
+   make -j1 DESTDIR=$PKG install
+   #make -j1 DESTDIR=$PKG install-man
+   #make -j1 htmldir=/usr/share/doc/git-$version install-html             
+   #mkdir -p $PKG/usr/share/doc/git-$version/man-pages/{html,text}        
+   #mv       $PKG/usr/share/doc/git-$version/{git*.txt,man-pages/text}    
+   #mv       $PKG/usr/share/doc/git-$version/{git*.,index.,man-pages/}html
+   #mkdir    $PKG/usr/share/doc/git-$version/technical/{html,text}        
+   #mv       $PKG/usr/share/doc/git-$version/technical/{*.txt,text}       
+   #mv       $PKG/usr/share/doc/git-$version/technical/{*.,}html          
+   #mkdir    $PKG/usr/share/doc/git-$version/howto/{html,text}            
+   #mv       $PKG/usr/share/doc/git-$version/howto/{*.txt,text}           
+   #mv       $PKG/usr/share/doc/git-$version/howto/{*.,}html
+   #tar -xf ../git-manpages-$version.tar.gz -C $PKG/usr/share/man --no-same-owner --no-overwrite-dir
+   #mkdir -p $PKG/usr/share/doc/git-$version/man-pages/{html,text}        
+  # 
+  # tar -xf  ../git-htmldocs-$version.tar.gz \
+  #     -C   $PKG/usr/share/doc/git-$version --no-same-owner --no-overwrite-dir
+  # 
+  # find $PKG/usr/share/doc/git-$version -type d -exec chmod 755 {} \;    
+  # find $PKG/usr/share/doc/git-$version -type f -exec chmod 644 {} \;    
+  # 
+  # mv       $PKG/usr/share/doc/git-$version/{git*.txt,man-pages/text}    
+  # mv       $PKG/usr/share/doc/git-$version/{git*.,index.,man-pages/}html
+  # mkdir    $PKG/usr/share/doc/git-$version/technical/{html,text}        
+  # mv       $PKG/usr/share/doc/git-$version/technical/{*.txt,text}       
+  # mv       $PKG/usr/share/doc/git-$version/technical/{*.,}html          
+  # mkdir    $PKG/usr/share/doc/git-$version/howto/{html,text}            
+  # mv       $PKG/usr/share/doc/git-$version/howto/{*.txt,text}           
+  # mv       $PKG/usr/share/doc/git-$version/howto/{*.,}html
+   
+  # git config --system http.sslCAPath $PKG/etc/ssl/certs
+   
+
+    rm -fr $PKG/usr/share/info
+}

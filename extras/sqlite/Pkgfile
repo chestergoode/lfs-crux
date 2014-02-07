@@ -1,0 +1,28 @@
+#
+# This is a prototype Pkgfile created from blfs scriptlet
+# This needs review and correction before it is used as a Pkgfile
+# Review and correct this file and then rename it to Pkgfile
+#
+name=sqlite
+version=3080002
+release=1
+source=(
+  http://sqlite.org/2013/sqlite-autoconf-$version.tar.gz \
+  http://sqlite.org/2013/sqlite-doc-$version.zip
+)
+
+build() {
+   cd $name-autoconf-$version
+   #unzip -q ../sqlite-doc-$version.zip
+   ./configure --prefix=/usr --disable-static        \
+               CFLAGS="-g -O2 -DSQLITE_ENABLE_FTS3=1 \
+               -DSQLITE_ENABLE_COLUMN_METADATA=1     \
+               -DSQLITE_ENABLE_UNLOCK_NOTIFY=1       \
+               -DSQLITE_SECURE_DELETE=1" &&
+   make
+   make -j1 DESTDIR=$PKG install
+   #install -v -m755 -d $PKG/usr/share/doc/sqlite-3.8.0.2 &&
+   #cp -v -R sqlite-doc-$version/* $PKG/usr/share/doc/sqlite-3.8.0.2
+
+    rm -fr $PKG/usr/share/info
+}

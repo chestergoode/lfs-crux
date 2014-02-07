@@ -1,0 +1,36 @@
+# Description: Decompress utility for zipfiles
+# URL:         http://infozip.sourceforge.net/UnZip.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+# Description: Decompress utility for zipfiles
+# URL:         http://infozip.sourceforge.net/UnZip.html
+# Maintainer:  CRUX System Team, core-ports at crux dot nu
+
+name=unzip
+version=6.0
+release=1
+source=(http://downloads.sourceforge.net/sourceforge/infozip/${name}${version//./}.tar.gz)
+
+build() {
+    cd ${name}${version//./}
+    case `uname -m` in
+      i?86)
+        sed -i -e 's/DASM"/DASM -DNO_LCHMOD"/' unix/Makefile
+        make -f unix/Makefile linux
+        ;;
+      *)
+        sed -i -e 's/CFLAGS="-O -Wall/& -DNO_LCHMOD/' unix/Makefile
+        make -f unix/Makefile linux_noasm
+        ;;
+    esac
+
+    if [ "${PKGMK_RUN_TEST}" == "test" ]
+    then
+        echo =============== TESTING start
+        make -k check || true
+        echo =============== TESTING end
+    fi
+    make prefix=$PKG/usr install
+
+    rm -fr $PKG/usr/share/info
+}
