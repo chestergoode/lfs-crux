@@ -1,6 +1,5 @@
 # Description: Network sniffer with command line interface
 # URL:         http://www.tcpdump.org
-# Maintainer:  Juergen Daubert, jue at crux dot nu
 # Depends on:  libpcap, openssl
 
 name=tcpdump

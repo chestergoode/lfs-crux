@@ -1,6 +1,5 @@
 # Description: Access Control Lists library
 # URL:         http://savannah.nongnu.org/projects/acl
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 # Depends on:  attr
 #
 # This is a prototype Pkgfile created from blfs scriptlet

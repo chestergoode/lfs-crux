@@ -1,6 +1,5 @@
 # Description: SquashFS tools
 # URL: http://squashfs.sourceforge.net/
-# Maintainer: Matt Housh, jaeger at morpheus dot net
 # Depends on: xz
  
 name=squashfs-tools

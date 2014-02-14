@@ -1,10 +1,8 @@
 # Description: Compression and file packaging/archive utility
 # URL:         http://infozip.sourceforge.net/Zip.html
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 # Depends on:  bzip2
 # Description: Decompress utility for zipfiles
 # URL:         http://infozip.sourceforge.net/UnZip.html
-# Maintainer:  CRUX System Team, core-ports at crux dot nu
 
 name=zip
 version=30

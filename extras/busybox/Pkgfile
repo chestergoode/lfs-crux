@@ -1,6 +1,5 @@
 # Description: Busybox
 # URL: http://www.busybox.net        
-# Maintainer:  
 
 name=busybox
 version=1.21.1
