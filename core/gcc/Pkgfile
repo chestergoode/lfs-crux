@@ -2,7 +2,7 @@
 # URL:         http://gcc.gnu.org
 # Depends on:  zlib libmpc
 name=gcc
-version=4.8.1
+version=4.8.2
 release=1
 source=(
 http://ftp.gnu.org/gnu/gcc/gcc-$version/gcc-$version.tar.bz2
@@ -12,29 +12,29 @@ build() {
     case `uname -m` in
       i?86) sed -i 's/^T_CFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in ;;
     esac
-    sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
+#    sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
     sed -i -e /autogen/d -e /check.sh/d fixincludes/Makefile.in
     mv -v libmudflap/testsuite/libmudflap.c++/pass41-frag.cxx{,.disable}
     mkdir -v ../gcc-build
     cd ../gcc-build
-    ../gcc-4.8.1/configure --prefix=/usr               \
-                           --libexecdir=/usr/lib       \
-                           --enable-shared             \
-                           --enable-threads=posix      \
-                           --enable-__cxa_atexit       \
-                           --enable-clocale=gnu        \
-                           --enable-languages=c,c++    \
-                           --disable-multilib          \
-                           --disable-bootstrap         \
-                           --disable-install-libiberty \
-                           --with-system-zlib
+    SED=sed                          \
+    ../gcc-4.8.2/configure           \
+         --prefix=/usr               \
+         --enable-shared             \
+         --enable-threads=posix      \
+         --enable-__cxa_atexit       \
+         --enable-clocale=gnu        \
+         --enable-languages=c,c++    \
+         --disable-multilib          \
+         --enable-bootstrap         \
+         --with-system-zlib
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
     then
         echo =============== TESTING start
         ulimit -s 32768
         make -k check || true
-        ../gcc-4.8.1/contrib/test_summary
+        ../gcc-4.8.2/contrib/test_summary
         echo =============== TESTING end
     fi
    

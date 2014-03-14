@@ -3,7 +3,7 @@
 # Depends on:  ncurses
 
 name=procps-ng
-version=3.3.8
+version=3.3.9
 release=1
 source=(
 http://sourceforge.net/projects/procps-ng/files/Production/procps-ng-$version.tar.xz
@@ -13,9 +13,8 @@ build() {
     ./configure --prefix=/usr                           \
                 --exec-prefix=                          \
                 --libdir=/usr/lib                       \
-                --docdir=/usr/share/doc/procps-ng-3.3.8 \
+                --docdir=/usr/share/doc/procps-ng-3.3.9 \
                 --disable-static                        \
-                --disable-skill                         \
                 --disable-kill
     make
     sed -i -r 's|(pmap_initname)\\\$|\1|' testsuite/pmap.test/pmap.exp
@@ -30,7 +29,8 @@ build() {
     make DESTDIR=$PKG install
     mkdir $PKG/lib
     mv -v $PKG/usr/lib/libprocps.so.* $PKG/lib
-    ln -sfv ../../lib/libprocps.so.1.1.2 $PKG/usr/lib/libprocps.so
+    mv -v $PKG/usr/bin/pidof $PKG/bin/pidof
+    ln -sfv ../../lib/$(readlink /usr/lib/libprocps.so) /usr/lib/libprocps.so
 
     rm -fr $PKG/usr/share/info
 }

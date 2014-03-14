@@ -9,7 +9,7 @@ http://ftp.gnu.org/gnu/gawk/gawk-$version.tar.xz
 )
 build() {
     cd $name-$version
-    ./configure --prefix=/usr --libexecdir=/usr/lib
+    ./configure --prefix=/usr
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
     then

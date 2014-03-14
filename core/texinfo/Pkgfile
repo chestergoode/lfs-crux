@@ -1,5 +1,5 @@
 name=texinfo
-version=5.1
+version=5.2
 release=1
 source=(
 http://ftp.gnu.org/gnu/texinfo/texinfo-$version.tar.xz \
@@ -8,7 +8,6 @@ texinfo-$version-test-1.patch
 
 build() {
     cd $name-$version
-    patch -Np1 -i $SRC/texinfo-$version-test-1.patch
     ./configure --prefix=/usr
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]

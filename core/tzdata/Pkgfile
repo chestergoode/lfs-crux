@@ -2,7 +2,7 @@
 # URL:         ftp://ftp.iana.org/tz/code/tz-link.htm
 
 name=tzdata
-version=2013d
+version=20133
 release=1
 source=(
 http://www.iana.org/time-zones/repository/releases/tzdata2013d.tar.gz
@@ -12,8 +12,8 @@ build() {
     mkdir -pv $ZONEINFO/{posix,right}
    
     for tz in etcetera southamerica northamerica europe africa antarctica  \
-              asia australasia backward pacificnew solar87 solar88 solar89 \
-              systemv; do
+              asia australasia backward pacificnew systemv; do
+
         zic -L /dev/null   -d $ZONEINFO       -y "sh yearistype.sh" ${tz}
         zic -L /dev/null   -d $ZONEINFO/posix -y "sh yearistype.sh" ${tz}
         zic -L leapseconds -d $ZONEINFO/right -y "sh yearistype.sh" ${tz}

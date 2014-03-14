@@ -2,7 +2,7 @@
 # URL:         http://www.gnu.org/software/gettext/
 # Depends on:  ncurses acl
 name=gettext
-version=0.18.3
+version=0.18.3.2
 release=1
 source=(
 http://ftp.gnu.org/gnu/gettext/gettext-$version.tar.gz

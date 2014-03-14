@@ -1,5 +1,5 @@
 name=man-db
-version=2.6.5
+version=2.6.6
 release=1
 source=(
 http://download.savannah.gnu.org/releases/man-db/man-db-$version.tar.xz
@@ -7,7 +7,6 @@ http://download.savannah.gnu.org/releases/man-db/man-db-$version.tar.xz
 build() {
     cd $name-$version
     ./configure --prefix=/usr                        \
-                --libexecdir=/usr/lib                \
                 --docdir=/usr/share/doc/man-db-$version \
                 --sysconfdir=/etc                    \
                 --disable-setuid                     \

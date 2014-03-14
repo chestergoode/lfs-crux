@@ -6,25 +6,23 @@ version=6.2
 release=1
 source=(
 http://ftp.gnu.org/gnu/readline/readline-$version.tar.gz \
-readline-$version-fixes-1.patch
+readline-$version-fixes-2.patch
 )
 build() {
     cd $name-$version
     sed -i '/MV.*old/d' Makefile.in
     sed -i '/{OLDSUFF}/c:' support/shlib-install
     patch -Np1 -i $SRC/readline-$version-fixes-1.patch
-    ./configure --prefix=/usr --libdir=/lib
+    ./configure --prefix=/usr
     make SHLIB_LIBS=-lncurses
    
     make DESTDIR=$PKG install
     mkdir -pv $PKG/usr/lib
-    mv -v $PKG/lib/lib{readline,history}.a $PKG/usr/lib
-    rm -v $PKG/lib/lib{readline,history}.so
-    ln -sfv ../../lib/libreadline.so.6 $PKG/usr/lib/libreadline.so
-    ln -sfv ../../lib/libhistory.so.6 $PKG/usr/lib/libhistory.so
-    mkdir   -pv       $PKG/usr/share/doc/readline-$version
-    install -v -m644 doc/*.{ps,pdf,html,dvi} \
-                     $PKG/usr/share/doc/readline-$version
+    mv -v $PKG/usr/lib/lib{readline,history}.so.* $PKG/lib
+    ln -sfv ../../lib/$(readlink /usr/lib/libreadline.so) $PKG/usr/lib/libreadline.so
+    ln -sfv ../../lib/$(readlink /usr/lib/libhistory.so ) $PKG/usr/lib/libhistory.so
+    mkdir   -pv $PKG/usr/share/doc/readline-6.2
+    install -v -m644 doc/*.{ps,pdf,html,dvi} $PKG/usr/share/doc/readline-6.2
 
     rm -fr $PKG/usr/share/info
 }

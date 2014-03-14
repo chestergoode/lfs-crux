@@ -2,19 +2,31 @@
 # URL:         http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 # Depends on:  kmod
 name=udev-lfs
-version=206-1
+version=208-3
 release=1
 source=(
-http://www.freedesktop.org/software/systemd/systemd-206.tar.xz \
+http://www.freedesktop.org/software/systemd/systemd-208.tar.xz \
 http://anduin.linuxfromscratch.org/sources/other/udev-lfs-$version.tar.bz2
 )
 build() {
-    mv udev-lfs-$version systemd-206
-    cd systemd-206
+    mv udev-lfs-$version systemd-208
+    cd systemd-208
    
+    if [ -d /tools/include ]
+    then
+        ln -svf /tools/include/blkid /usr/include
+        ln -svf /tools/include/uuid  /usr/include
+        export LD_LIBRARY_PATH=/tools/lib
+    fi
+
     make -f udev-lfs-$version/Makefile.lfs
     make DESTDIR=$PKG -f udev-lfs-$version/Makefile.lfs install
     #build/udevadm hwdb --update
     #bash udev-lfs-$version/init-net-rules.sh
+    if [ -d /tools/include ]
+    then
+        rm -fv /usr/include/{uuid,blkid}
+        unset LD_LIBRARY_PATH
+    fi
     rm -fr $PKG/usr/share/info
 }

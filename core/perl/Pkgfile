@@ -2,7 +2,7 @@
 # URL:         http://www.perl.org/
 # Depends on:  db gdbm
 name=perl
-version=5.18.1
+version=5.18.2
 release=1
 source=(
 http://www.cpan.org/src/5.0/perl-$version.tar.bz2 \

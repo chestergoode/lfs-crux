@@ -2,20 +2,19 @@
 # URL:         http://www.gnu.org/software/automake/
 # Depends on:  gawk, perl, autoconf
 name=automake
-version=1.14
+version=1.14.1
 release=1
 source=(
-http://ftp.gnu.org/gnu/automake/automake-$version.tar.xz \
-automake-$version-test-1.patch
+http://ftp.gnu.org/gnu/automake/automake-$version.tar.xz
 )
 build() {
     cd $name-$version
-    patch -Np1 -i $SRC/automake-$version-test-1.patch
     ./configure --prefix=/usr --docdir=/usr/share/doc/automake-$version
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
     then
         echo =============== TESTING start
+        sed -i "s:./configure:LEXLIB=/usr/lib/libfl.a &:" t/lex-{clean,depend}-cxx.sh
         make -k check || true
         echo =============== TESTING end
     fi

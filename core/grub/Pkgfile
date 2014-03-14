@@ -16,6 +16,7 @@ build() {
                 --sysconfdir=/etc      \
                 --disable-grub-emu-usb \
                 --disable-efiemu       \
+                --sbindir=/sbin       \
                 --disable-werror
     make
     make DESTDIR=$PKG install

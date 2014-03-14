@@ -2,16 +2,15 @@
 # URL:         http://www.gnu.org/software/inetutils/inetutils.html
 # Depends on:  readline
 name=inetutils
-version=1.9.1
+version=1.9.2
 release=1
 source=(
 http://ftp.gnu.org/gnu/inetutils/inetutils-$version.tar.gz
 )
 build() {
     cd $name-$version
-    sed -i -e '/gets is a/d' lib/stdio.in.h
+    echo '#define PATH_PROCNET_DEV "/proc/net/dev"' >> ifconfig/system/linux.h 
     ./configure --prefix=/usr  \
-        --libexecdir=/usr/sbin \
         --localstatedir=/var   \
         --enable-ifconfig     \
         --disable-logger       \
@@ -28,6 +27,8 @@ build() {
     make DESTDIR=$PKG install
     mkdir $PKG/bin
     mv -v $PKG/usr/bin/{hostname,ping,ping6,traceroute} $PKG/bin
+    mkdir $PKG/sbin
+    mv -v $PKG/usr/bin/ifconfig $PKG/sbin
 
     rm -fr $PKG/usr/share/info
 }

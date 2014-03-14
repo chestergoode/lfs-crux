@@ -2,22 +2,25 @@
 # URL:         http://www.gnu.org/software/libc/
 
 name=glibc
-version=2.18
+version=2.19
 release=1
 source=(
 http://ftp.gnu.org/gnu/glibc/glibc-$version.tar.xz \
-nsswitch.conf ld.so.conf
+nsswitch.conf ld.so.conf glibc-2.19-fhs-1.patch
 )
 build() {
     cd $name-$version
-    sed -i -e 's/static __m128i/inline &/' sysdeps/x86_64/multiarch/strstr.c
+#    sed -i -e 's/static __m128i/inline &/' sysdeps/x86_64/multiarch/strstr.
+    sed -i 's/\\$$(pwd)/`pwd`/' timezone/Makefile
+    patch -Np1 -i $SRC/glibc-2.19-fhs-1.patch
+
     mkdir -v ../glibc-build
     cd ../glibc-build
     ../glibc-$version/configure    \
         --prefix=/usr          \
         --disable-profile      \
         --enable-kernel=2.6.32 \
-        --libexecdir=/usr/lib/glibc
+	--enable-obsolete-rpc
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
     then
@@ -31,9 +34,12 @@ build() {
     mkdir -pv $PKG/etc
     touch $PKG/etc/ld.so.conf
     make install_root=$PKG -j1 install
-    cp -v ../glibc-$version/sunrpc/rpc/*.h $PKG/usr/include/rpc
-    cp -v ../glibc-$version/sunrpc/rpcsvc/*.h $PKG/usr/include/rpcsvc
-    cp -v ../glibc-$version/nis/rpcsvc/*.h $PKG/usr/include/rpcsvc
+#    cp -v ../glibc-$version/sunrpc/rpc/*.h $PKG/usr/include/rpc
+#    cp -v ../glibc-$version/sunrpc/rpcsvc/*.h $PKG/usr/include/rpcsvc
+#    cp -v ../glibc-$version/nis/rpcsvc/*.h $PKG/usr/include/rpcsvc
+    cp -v ../glibc-2.19/nscd/nscd.conf $PKG/etc/nscd.conf
+    mkdir -pv $PKG/var/cache/nscd
+
    
     make install_root=$PKG localedata/install-locales
     cp $SRC/nsswitch.conf $PKG/etc
@@ -42,7 +48,6 @@ build() {
     #
     # Remind user to adjust tool chain if needed.
     #
-   
     if [ -f /tools/bin/ld-new ]
     then
          echo '>>>>>>> Adjust and verify tool chain <<<<<<<<<<'

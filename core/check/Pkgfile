@@ -4,7 +4,7 @@
 # Review and correct this file and then rename it to Pkgfile
 #
 name=check
-version=0.9.10
+version=0.9.12
 release=1
 source=(
   http://downloads.sourceforge.net/check/check-$version.tar.gz

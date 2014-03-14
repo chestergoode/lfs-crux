@@ -11,7 +11,6 @@ build() {
     cd $name-$version
     PAGE=letter ./configure --prefix=/usr
     make
-    mkdir -pv $PKG/usr/share/doc/groff-1.22/pdf
     make DESTDIR=$PKG install
     ln -sv eqn $PKG/usr/bin/geqn
     ln -sv tbl $PKG/usr/bin/gtbl

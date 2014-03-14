@@ -2,7 +2,7 @@
 # URL:         http://flex.sourceforge.net/
 
 name=flex
-version=2.5.37
+version=2.5.38
 release=1
 source=(
 http://prdownloads.sourceforge.net/flex/flex-$version.tar.bz2 \
@@ -23,7 +23,6 @@ build() {
    
     make DESTDIR=$PKG install
     mkdir -p $PKG/usr/lib
-    ln -sv libfl.a $PKG/usr/lib/libl.a
     mkdir -p $PKG/usr/bin
     cp $SRC/lex $PKG/usr/bin
     chmod -v 755 $PKG/usr/bin/lex

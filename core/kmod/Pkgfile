@@ -2,19 +2,19 @@
 # URL:         http://git.kernel.org/?p=utils/kernel/kmod/kmod.git
 
 name=kmod
-version=14
+version=16
 release=1
 source=(
 http://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-$version.tar.xz
 )
 build() {
     cd $name-$version
-    ./configure --prefix=/usr       \
-                --bindir=/bin       \
-                --libdir=/lib       \
-                --sysconfdir=/etc   \
-                --disable-manpages  \
-                --with-xz           \
+    ./configure --prefix=/usr          \
+                --bindir=/bin          \
+                --sysconfdir=/etc      \
+                --with-rootlibdir=/lib \
+                --disable-manpages     \
+                --with-xz              \
                 --with-zlib
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
@@ -23,7 +23,8 @@ build() {
         make -k check || true
         echo =============== TESTING end
     fi
-    make DESTDIR=$PKG pkgconfigdir=/usr/lib/pkgconfig install
+    make DESTDIR=$PKG install
+    make DESTDIR=$PKG -C man install
     mkdir -pv $PKG/sbin
     for target in depmod insmod modinfo modprobe rmmod; do
       ln -sv ../bin/kmod $PKG/sbin/$target

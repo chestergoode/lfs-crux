@@ -1,7 +1,7 @@
 # Description: Miscellaneous system utilities
 # URL:         http://userweb.kernel.org/~kzak/util-linux-ng/
 name=util-linux
-version=2.23.2
+version=2.24.1
 release=1
 source=(
 http://www.kernel.org/pub/linux/utils/util-linux/v2.23/util-linux-$version.tar.xz
@@ -12,7 +12,7 @@ build() {
          $(grep -rl '/etc/adjtime' .)
    
     mkdir -pv $PKG/var/lib/hwclock
-    ./configure --disable-su --disable-sulogin --disable-login
+    ./configure
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
     then

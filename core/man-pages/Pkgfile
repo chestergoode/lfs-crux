@@ -2,7 +2,7 @@
 # URL:         http://man7.org/linux/man-pages/index.html
 # Depends on:  man
 name=man-pages
-version=3.53
+version=3.59
 release=1
 source=(
 http://www.kernel.org/pub/linux/docs/man-pages/man-pages-$version.tar.xz

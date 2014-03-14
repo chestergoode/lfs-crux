@@ -1,7 +1,7 @@
 # Description: The GNU Binutils are a collection of binary tools
 # URL:         http://sources.redhat.com/binutils/
 name=binutils
-version=2.23.2
+version=2.24
 release=1
 source=(
 http://ftp.gnu.org/gnu/binutils/binutils-$version.tar.bz2
@@ -10,11 +10,11 @@ build() {
     cd $name-$version
     rm -fv etc/standards.info
     sed -i.bak '/^INFO/s/standards.info //' etc/Makefile.in
-    sed -i -e 's/@colophon/@@colophon/' \
-           -e 's/doc@cygnus.com/doc@@cygnus.com/' bfd/doc/bfd.texinfo
+#    sed -i -e 's/@colophon/@@colophon/' \
+#           -e 's/doc@cygnus.com/doc@@cygnus.com/' bfd/doc/bfd.texinfo
     mkdir -v ../binutils-build
     cd ../binutils-build
-    ../binutils-2.23.2/configure --prefix=/usr --enable-shared
+    ../binutils-$version/configure --prefix=/usr --enable-shared
     make tooldir=/usr
     if [ "${PKGMK_RUN_TEST}" == "test" ]
     then
@@ -26,7 +26,7 @@ build() {
    
     make DESTDIR=$PKG tooldir=/usr install
     mkdir -pv $PKG/usr/include
-    cp -v ../binutils-2.23.2/include/libiberty.h $PKG/usr/include
+#    cp -v ../binutils-$version/include/libiberty.h $PKG/usr/include
 
     rm -fr $PKG/usr/share/info
 }

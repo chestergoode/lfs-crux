@@ -5,13 +5,12 @@ name=sysvinit
 version=2.88dsf
 release=1
 source=(
-http://download.savannah.gnu.org/releases/sysvinit/sysvinit-$version.tar.bz2
+http://download.savannah.gnu.org/releases/sysvinit/sysvinit-$version.tar.bz2 \
+sysvinit-2.88dsf-consolidated-1.patch
 )
 build() {
     cd $name-$version
-    sed -i 's@Sending processes@& configured via /etc/inittab@g' src/init.c
-    sed -i -e '/utmpdump/d' \
-           -e '/mountpoint/d' src/Makefile
+    patch -Np1 -i ../sysvinit-2.88dsf-consolidated-1.patch
     make -C src
     make ROOT=$PKG -C src install
 

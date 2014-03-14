@@ -20,7 +20,7 @@ build() {
     make DESTDIR=$PKG install
     mkdir -pv $PKG/lib
     mv -v $PKG/usr/lib/libncursesw.so.5* $PKG/lib
-    ln -sfv ../../lib/libncursesw.so.5 $PKG/usr/lib/libncursesw.so
+    ln -sfv ../../lib/$(readlink /usr/lib/libncursesw.so) $PKG/usr/lib/libncursesw.so
     for lib in ncurses form panel menu ; do
         rm -vf                    $PKG/usr/lib/lib${lib}.so
         echo "INPUT(-l${lib}w)" > $PKG/usr/lib/lib${lib}.so

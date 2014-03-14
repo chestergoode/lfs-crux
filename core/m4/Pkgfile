@@ -2,14 +2,13 @@
 # URL:         http://www.seindal.dk/rene/gnu/
 
 name=m4
-version=1.4.16
+version=1.4.17
 release=1
 source=(
 http://ftp.gnu.org/gnu/m4/m4-$version.tar.bz2
 )
 build() {
     cd $name-$version
-    sed -i -e '/gets is a/d' lib/stdio.in.h
     ./configure --prefix=/usr
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]

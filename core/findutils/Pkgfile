@@ -10,7 +10,6 @@ http://ftp.gnu.org/gnu/findutils/findutils-$version.tar.gz
 build() {
     cd $name-$version
     ./configure --prefix=/usr                   \
-                --libexecdir=/usr/lib/findutils \
                 --localstatedir=/var/lib/locate
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]

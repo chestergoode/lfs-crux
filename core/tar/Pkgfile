@@ -2,7 +2,7 @@
 # URL:         http://www.gnu.org/software/tar/tar.html
 
 name=tar
-version=1.26
+version=1.27.1
 release=1
 source=(
 http://ftp.gnu.org/gnu/tar/tar-$version.tar.bz2
@@ -11,11 +11,9 @@ tar-$version-manpage-1.patch
 build() {
     cd $name-$version
     patch -Np1 -i $SRC/tar-$version-manpage-1.patch
-    sed -i -e '/gets is a/d' gnu/stdio.in.h
     FORCE_UNSAFE_CONFIGURE=1  \
     ./configure --prefix=/usr \
-                --bindir=/bin \
-                --libexecdir=/usr/sbin
+                --bindir=/bin
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
     then

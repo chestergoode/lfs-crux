@@ -2,16 +2,19 @@
 # URL:         http://e2fsprogs.sourceforge.net/
 # Depends on:  util-linux
 name=e2fsprogs
-version=1.42.8
+version=1.42.9
 release=1
 source=(
 http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-$version.tar.gz
 )
 build() {
     cd $name-$version
-    sed -i -e 's/mke2fs/$MKE2FS/' -e 's/debugfs/$DEBUGFS/' tests/f_extent_oobounds/script
+    sed -i -e 's|^LD_LIBRARY_PATH.*|&:/tools/lib|' tests/test_config
     mkdir -v build
     cd build
+    LIBS=-L/tools/lib                    \
+    CFLAGS=-I/tools/include              \
+    PKG_CONFIG_PATH=/tools/lib/pkgconfig \
     ../configure --prefix=/usr         \
                  --with-root-prefix="" \
                  --enable-elf-shlibs   \

@@ -9,6 +9,7 @@ http://ftp.gnu.org/gnu/diffutils/diffutils-$version.tar.xz
 )
 build() {
     cd $name-$version
+    sed -i 's:= @mkdir_p@:= /bin/mkdir -p:' po/Makefile.in.in
     ./configure --prefix=/usr
     make
     if [ "${PKGMK_RUN_TEST}" == "test" ]
